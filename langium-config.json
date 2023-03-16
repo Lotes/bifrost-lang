@@ -1,0 +1,12 @@
+{
+    "projectName": "Bifrost",
+    "languages": [{
+        "id": "bifrost",
+        "grammar": "src/language-server/bifrost.langium",
+        "fileExtensions": [".beef"],
+        "textMate": {
+            "out": "syntaxes/bifrost.tmLanguage.json"
+        }
+    }],
+    "out": "src/language-server/generated"
+}

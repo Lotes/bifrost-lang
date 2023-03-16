@@ -1,0 +1,57 @@
+{
+  "name": "bifrost",
+  "scopeName": "source.bifrost",
+  "fileTypes": [
+    ".beef"
+  ],
+  "patterns": [
+    {
+      "include": "#comments"
+    },
+    {
+      "name": "keyword.control.bifrost",
+      "match": "\\b(Hello|person)\\b"
+    },
+    {
+      "name": "string.quoted.double.bifrost",
+      "begin": "\"",
+      "end": "\""
+    },
+    {
+      "name": "string.quoted.single.bifrost",
+      "begin": "'",
+      "end": "'"
+    }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.block.bifrost",
+          "begin": "/\\*",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.comment.bifrost"
+            }
+          },
+          "end": "\\*/",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.comment.bifrost"
+            }
+          }
+        },
+        {
+          "begin": "//",
+          "beginCaptures": {
+            "1": {
+              "name": "punctuation.whitespace.comment.leading.bifrost"
+            }
+          },
+          "end": "(?=$)",
+          "name": "comment.line.bifrost"
+        }
+      ]
+    }
+  }
+}
