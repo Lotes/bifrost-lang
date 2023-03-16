@@ -10,17 +10,26 @@
         "Programming Languages"
     ],
     "contributes": {
-        "languages": [{
-            "id": "bifrost",
-            "aliases": ["Bifrost", "bifrost"],
-            "extensions": [".beef"],
-            "configuration": "./language-configuration.json"
-        }],
-        "grammars": [{
-            "language": "bifrost",
-            "scopeName": "source.bifrost",
-            "path": "./syntaxes/bifrost.tmLanguage.json"
-        }]
+        "languages": [
+            {
+                "id": "bifrost",
+                "aliases": [
+                    "Bifrost",
+                    "bifrost"
+                ],
+                "extensions": [
+                    ".beef"
+                ],
+                "configuration": "./language-configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "bifrost",
+                "scopeName": "source.bifrost",
+                "path": "./syntaxes/bifrost.tmLanguage.json"
+            }
+        ]
     },
     "activationEvents": [
         "onLanguage:bifrost"
@@ -40,7 +49,9 @@
         "watch": "tsc -b tsconfig.json --watch",
         "lint": "eslint src --ext ts",
         "langium:generate": "langium generate",
-        "langium:watch": "langium generate --watch"
+        "langium:watch": "langium generate --watch",
+        "test": "vitest",
+        "coverage": "vitest run --coverage"
     },
     "dependencies": {
         "chevrotain": "^9.1.0",
@@ -58,6 +69,7 @@
         "@typescript-eslint/parser": "^4.14.1",
         "eslint": "^7.19.0",
         "langium-cli": "^0.4.0",
-        "typescript": "^4.6.2"
+        "typescript": "^4.6.2",
+        "vitest": "^0.29.3"
     }
 }
