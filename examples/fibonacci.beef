@@ -1,0 +1,13 @@
+module Fibonacci {
+  interface:
+    in n: int
+    out result: int
+  implementation:
+    when this.n <= 2 {
+      instance NMinusOne of Fibonacci;
+      instance NMinusTwo of Fibonacci;
+      from this.n - 1 to NMinusOne.n;
+      from this.n - 2 to NMinusTwo.n;
+      from NMinusOne.result + NMinusTwo.result to this.result;
+    }
+}

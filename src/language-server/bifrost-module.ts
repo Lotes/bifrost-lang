@@ -3,14 +3,13 @@ import {
     LangiumServices, LangiumSharedServices, Module, PartialLangiumServices
 } from 'langium';
 import { BifrostGeneratedModule, BifrostGeneratedSharedModule } from './generated/module';
-import { BifrostValidationRegistry, BifrostValidator } from './bifrost-validator';
+import { BifrostValidationRegistry } from './bifrost-validator';
 
 /**
  * Declaration of custom services - add your own service classes here.
  */
 export type BifrostAddedServices = {
     validation: {
-        BifrostValidator: BifrostValidator
     }
 }
 
@@ -28,7 +27,6 @@ export type BifrostServices = LangiumServices & BifrostAddedServices
 export const BifrostModule: Module<BifrostServices, PartialLangiumServices & BifrostAddedServices> = {
     validation: {
         ValidationRegistry: (services) => new BifrostValidationRegistry(services),
-        BifrostValidator: () => new BifrostValidator()
     }
 };
 

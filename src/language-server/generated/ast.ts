@@ -7,47 +7,122 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
 import { AstNode, AstReflection, Reference, isAstNode, TypeMetaData } from 'langium';
 
-export interface Greeting extends AstNode {
-    readonly $container: Model;
-    person: Reference<Person>
+export type DataType = string;
+
+export type Direction = 'in' | 'out';
+
+export type WireTargetExpression = BinaryWireTargetExpression | WireTargetFactor;
+
+export const WireTargetExpression = 'WireTargetExpression';
+
+export function isWireTargetExpression(item: unknown): item is WireTargetExpression {
+    return reflection.isInstance(item, WireTargetExpression);
 }
 
-export const Greeting = 'Greeting';
+export type WireTargetFactor = BinaryWireTargetExpression | WireTargetPrimary;
 
-export function isGreeting(item: unknown): item is Greeting {
-    return reflection.isInstance(item, Greeting);
+export const WireTargetFactor = 'WireTargetFactor';
+
+export function isWireTargetFactor(item: unknown): item is WireTargetFactor {
+    return reflection.isInstance(item, WireTargetFactor);
 }
 
-export interface Model extends AstNode {
-    greetings: Array<Greeting>
-    persons: Array<Person>
+export interface BinaryWireTargetExpression extends AstNode {
+    readonly $container: BinaryWireTargetExpression | WireDefinition;
+    left: WireTargetFactor | WireTargetPrimary
+    op: '*' | '+' | '-' | '/' | 'div' | 'mod'
+    right: WireTargetFactor | WireTargetPrimary
 }
 
-export const Model = 'Model';
+export const BinaryWireTargetExpression = 'BinaryWireTargetExpression';
 
-export function isModel(item: unknown): item is Model {
-    return reflection.isInstance(item, Model);
+export function isBinaryWireTargetExpression(item: unknown): item is BinaryWireTargetExpression {
+    return reflection.isInstance(item, BinaryWireTargetExpression);
 }
 
-export interface Person extends AstNode {
-    readonly $container: Model;
+export interface File extends AstNode {
+    modules: Array<ModuleDefinition>
+}
+
+export const File = 'File';
+
+export function isFile(item: unknown): item is File {
+    return reflection.isInstance(item, File);
+}
+
+export interface ModuleDefinition extends AstNode {
+    readonly $container: File;
+    links: Array<WireDefinition>
+    modules: Array<ModuleInstance>
+    name: string
+    ports: Array<PortDefinition>
+}
+
+export const ModuleDefinition = 'ModuleDefinition';
+
+export function isModuleDefinition(item: unknown): item is ModuleDefinition {
+    return reflection.isInstance(item, ModuleDefinition);
+}
+
+export interface ModuleInstance extends AstNode {
+    readonly $container: ModuleDefinition;
+    module: Reference<ModuleDefinition>
     name: string
 }
 
-export const Person = 'Person';
+export const ModuleInstance = 'ModuleInstance';
 
-export function isPerson(item: unknown): item is Person {
-    return reflection.isInstance(item, Person);
+export function isModuleInstance(item: unknown): item is ModuleInstance {
+    return reflection.isInstance(item, ModuleInstance);
 }
 
-export type BifrostAstType = 'Greeting' | 'Model' | 'Person';
+export interface PortDefinition extends AstNode {
+    readonly $container: ModuleDefinition;
+    direction: Direction
+    name: string
+    type: DataType
+}
 
-export type BifrostAstReference = 'Greeting:person';
+export const PortDefinition = 'PortDefinition';
+
+export function isPortDefinition(item: unknown): item is PortDefinition {
+    return reflection.isInstance(item, PortDefinition);
+}
+
+export interface WireDefinition extends AstNode {
+    readonly $container: ModuleDefinition;
+    source: WireTargetExpression
+    target: WireTargetExpression
+}
+
+export const WireDefinition = 'WireDefinition';
+
+export function isWireDefinition(item: unknown): item is WireDefinition {
+    return reflection.isInstance(item, WireDefinition);
+}
+
+export interface WireTargetPrimary extends AstNode {
+    readonly $container: BinaryWireTargetExpression | WireDefinition;
+    instanceRef?: Reference<ModuleInstance>
+    number?: string
+    portRef?: Reference<PortDefinition>
+    string?: string
+}
+
+export const WireTargetPrimary = 'WireTargetPrimary';
+
+export function isWireTargetPrimary(item: unknown): item is WireTargetPrimary {
+    return reflection.isInstance(item, WireTargetPrimary);
+}
+
+export type BifrostAstType = 'BinaryWireTargetExpression' | 'File' | 'ModuleDefinition' | 'ModuleInstance' | 'PortDefinition' | 'WireDefinition' | 'WireTargetExpression' | 'WireTargetFactor' | 'WireTargetPrimary';
+
+export type BifrostAstReference = 'ModuleInstance:module' | 'WireTargetPrimary:instanceRef' | 'WireTargetPrimary:portRef';
 
 export class BifrostAstReflection implements AstReflection {
 
     getAllTypes(): string[] {
-        return ['Greeting', 'Model', 'Person'];
+        return ['BinaryWireTargetExpression', 'File', 'ModuleDefinition', 'ModuleInstance', 'PortDefinition', 'WireDefinition', 'WireTargetExpression', 'WireTargetFactor', 'WireTargetPrimary'];
     }
 
     isInstance(node: unknown, type: string): boolean {
@@ -59,6 +134,15 @@ export class BifrostAstReflection implements AstReflection {
             return true;
         }
         switch (subtype) {
+            case BinaryWireTargetExpression: {
+                return this.isSubtype(WireTargetExpression, supertype) || this.isSubtype(WireTargetFactor, supertype);
+            }
+            case WireTargetPrimary: {
+                return this.isSubtype(WireTargetFactor, supertype);
+            }
+            case WireTargetFactor: {
+                return this.isSubtype(WireTargetExpression, supertype);
+            }
             default: {
                 return false;
             }
@@ -67,8 +151,14 @@ export class BifrostAstReflection implements AstReflection {
 
     getReferenceType(referenceId: BifrostAstReference): string {
         switch (referenceId) {
-            case 'Greeting:person': {
-                return Person;
+            case 'ModuleInstance:module': {
+                return ModuleDefinition;
+            }
+            case 'WireTargetPrimary:instanceRef': {
+                return ModuleInstance;
+            }
+            case 'WireTargetPrimary:portRef': {
+                return PortDefinition;
             }
             default: {
                 throw new Error(`${referenceId} is not a valid reference id.`);
@@ -78,12 +168,21 @@ export class BifrostAstReflection implements AstReflection {
 
     getTypeMetaData(type: string): TypeMetaData {
         switch (type) {
-            case 'Model': {
+            case 'File': {
                 return {
-                    name: 'Model',
+                    name: 'File',
                     mandatory: [
-                        { name: 'greetings', type: 'array' },
-                        { name: 'persons', type: 'array' }
+                        { name: 'modules', type: 'array' }
+                    ]
+                };
+            }
+            case 'ModuleDefinition': {
+                return {
+                    name: 'ModuleDefinition',
+                    mandatory: [
+                        { name: 'links', type: 'array' },
+                        { name: 'modules', type: 'array' },
+                        { name: 'ports', type: 'array' }
                     ]
                 };
             }

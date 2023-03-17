@@ -10,7 +10,7 @@
     },
     {
       "name": "keyword.control.bifrost",
-      "match": "\\b(Hello|person)\\b"
+      "match": "\\b(div|from|implementation|in|instance|int|interface|mod|module|of|out|this|to)\\b"
     },
     {
       "name": "string.quoted.double.bifrost",
