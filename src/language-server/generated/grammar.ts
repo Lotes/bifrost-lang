@@ -16,19 +16,292 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ||(loadedBifro
       "name": "File",
       "entry": true,
       "alternatives": {
-        "$type": "Assignment",
-        "feature": "modules",
-        "operator": "+=",
-        "terminal": {
-          "$type": "RuleCall",
-          "rule": {
-            "$refText": "ModuleDefinition"
+        "$type": "Alternatives",
+        "elements": [
+          {
+            "$type": "Assignment",
+            "feature": "modules",
+            "operator": "+=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$refText": "ModuleDefinition"
+              },
+              "arguments": []
+            }
           },
-          "arguments": []
-        },
+          {
+            "$type": "Assignment",
+            "feature": "dataTypeDefinitions",
+            "operator": "=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$refText": "DataTypeDefinition"
+              },
+              "arguments": []
+            }
+          }
+        ],
         "cardinality": "*"
       },
       "definesHiddenTokens": false,
+      "fragment": false,
+      "hiddenTokens": [],
+      "parameters": [],
+      "wildcard": false
+    },
+    {
+      "$type": "ParserRule",
+      "name": "DataTypeDefinition",
+      "alternatives": {
+        "$type": "Group",
+        "elements": [
+          {
+            "$type": "Keyword",
+            "value": "datatype"
+          },
+          {
+            "$type": "Assignment",
+            "feature": "name",
+            "operator": "=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$refText": "UPPER_ID"
+              },
+              "arguments": []
+            }
+          },
+          {
+            "$type": "Assignment",
+            "feature": "typeParameters",
+            "operator": "+=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$refText": "TypeParameter"
+              },
+              "arguments": []
+            },
+            "cardinality": "*"
+          },
+          {
+            "$type": "Keyword",
+            "value": "{"
+          },
+          {
+            "$type": "Assignment",
+            "feature": "constructors",
+            "operator": "+=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$refText": "DataTypeConstructorDefinition"
+              },
+              "arguments": []
+            }
+          },
+          {
+            "$type": "Group",
+            "elements": [
+              {
+                "$type": "Keyword",
+                "value": ","
+              },
+              {
+                "$type": "Assignment",
+                "feature": "constructors",
+                "operator": "+=",
+                "terminal": {
+                  "$type": "RuleCall",
+                  "rule": {
+                    "$refText": "DataTypeConstructorDefinition"
+                  },
+                  "arguments": []
+                }
+              }
+            ],
+            "cardinality": "*"
+          },
+          {
+            "$type": "Keyword",
+            "value": "}"
+          }
+        ]
+      },
+      "definesHiddenTokens": false,
+      "entry": false,
+      "fragment": false,
+      "hiddenTokens": [],
+      "parameters": [],
+      "wildcard": false
+    },
+    {
+      "$type": "ParserRule",
+      "name": "TypeParameter",
+      "alternatives": {
+        "$type": "Assignment",
+        "feature": "name",
+        "operator": "=",
+        "terminal": {
+          "$type": "RuleCall",
+          "rule": {
+            "$refText": "LOWER_ID"
+          },
+          "arguments": []
+        }
+      },
+      "definesHiddenTokens": false,
+      "entry": false,
+      "fragment": false,
+      "hiddenTokens": [],
+      "parameters": [],
+      "wildcard": false
+    },
+    {
+      "$type": "ParserRule",
+      "name": "DataTypeConstructorDefinition",
+      "alternatives": {
+        "$type": "Group",
+        "elements": [
+          {
+            "$type": "Assignment",
+            "feature": "name",
+            "operator": "=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$refText": "UPPER_ID"
+              },
+              "arguments": []
+            }
+          },
+          {
+            "$type": "Assignment",
+            "feature": "parameters",
+            "operator": "+=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$refText": "TypeExpression"
+              },
+              "arguments": []
+            },
+            "cardinality": "*"
+          }
+        ]
+      },
+      "definesHiddenTokens": false,
+      "entry": false,
+      "fragment": false,
+      "hiddenTokens": [],
+      "parameters": [],
+      "wildcard": false
+    },
+    {
+      "$type": "ParserRule",
+      "name": "TypeExpression",
+      "alternatives": {
+        "$type": "Alternatives",
+        "elements": [
+          {
+            "$type": "Group",
+            "elements": [
+              {
+                "$type": "Action",
+                "inferredType": {
+                  "$type": "InferredType",
+                  "name": "TypeParameterReference"
+                }
+              },
+              {
+                "$type": "Assignment",
+                "feature": "typeParameter",
+                "operator": "=",
+                "terminal": {
+                  "$type": "CrossReference",
+                  "type": {
+                    "$refText": "TypeParameter"
+                  },
+                  "deprecatedSyntax": false
+                }
+              }
+            ]
+          },
+          {
+            "$type": "Group",
+            "elements": [
+              {
+                "$type": "Action",
+                "inferredType": {
+                  "$type": "InferredType",
+                  "name": "TypeApplication"
+                }
+              },
+              {
+                "$type": "Assignment",
+                "feature": "dataType",
+                "operator": "=",
+                "terminal": {
+                  "$type": "CrossReference",
+                  "type": {
+                    "$refText": "DataTypeDefinition"
+                  },
+                  "deprecatedSyntax": false
+                }
+              },
+              {
+                "$type": "Assignment",
+                "feature": "typeParameters",
+                "operator": "+=",
+                "terminal": {
+                  "$type": "RuleCall",
+                  "rule": {
+                    "$refText": "TypeExpression"
+                  },
+                  "arguments": []
+                },
+                "cardinality": "*"
+              }
+            ]
+          },
+          {
+            "$type": "Group",
+            "elements": [
+              {
+                "$type": "Action",
+                "inferredType": {
+                  "$type": "InferredType",
+                  "name": "ParenthesesTypeExpression"
+                }
+              },
+              {
+                "$type": "Keyword",
+                "value": "("
+              },
+              {
+                "$type": "Assignment",
+                "feature": "type",
+                "operator": "=",
+                "terminal": {
+                  "$type": "RuleCall",
+                  "rule": {
+                    "$refText": "TypeExpression"
+                  },
+                  "arguments": []
+                }
+              },
+              {
+                "$type": "Keyword",
+                "value": ")"
+              }
+            ]
+          }
+        ]
+      },
+      "definesHiddenTokens": false,
+      "entry": false,
       "fragment": false,
       "hiddenTokens": [],
       "parameters": [],
@@ -51,7 +324,7 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ||(loadedBifro
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$refText": "ID"
+                "$refText": "UPPER_ID"
               },
               "arguments": []
             }
@@ -90,56 +363,240 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ||(loadedBifro
             "value": ":"
           },
           {
-            "$type": "Alternatives",
+            "$type": "Assignment",
+            "feature": "body",
+            "operator": "=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$refText": "ImplementationBody"
+              },
+              "arguments": []
+            }
+          },
+          {
+            "$type": "Keyword",
+            "value": "}"
+          }
+        ]
+      },
+      "definesHiddenTokens": false,
+      "entry": false,
+      "fragment": false,
+      "hiddenTokens": [],
+      "parameters": [],
+      "wildcard": false
+    },
+    {
+      "$type": "ParserRule",
+      "name": "ImplementationBody",
+      "alternatives": {
+        "$type": "Alternatives",
+        "elements": [
+          {
+            "$type": "Group",
             "elements": [
               {
-                "$type": "Group",
-                "elements": [
-                  {
-                    "$type": "Assignment",
-                    "feature": "modules",
-                    "operator": "+=",
-                    "terminal": {
-                      "$type": "RuleCall",
-                      "rule": {
-                        "$refText": "ModuleInstance"
-                      },
-                      "arguments": []
-                    }
+                "$type": "Assignment",
+                "feature": "modules",
+                "operator": "+=",
+                "terminal": {
+                  "$type": "RuleCall",
+                  "rule": {
+                    "$refText": "ModuleInstance"
                   },
-                  {
-                    "$type": "Keyword",
-                    "value": ";"
-                  }
-                ]
+                  "arguments": []
+                }
               },
               {
-                "$type": "Group",
-                "elements": [
-                  {
-                    "$type": "Assignment",
-                    "feature": "links",
-                    "operator": "+=",
-                    "terminal": {
-                      "$type": "RuleCall",
-                      "rule": {
-                        "$refText": "WireDefinition"
-                      },
-                      "arguments": []
-                    }
-                  },
-                  {
-                    "$type": "Keyword",
-                    "value": ";"
-                  }
-                ]
+                "$type": "Keyword",
+                "value": ";"
               }
-            ],
+            ]
+          },
+          {
+            "$type": "Group",
+            "elements": [
+              {
+                "$type": "Assignment",
+                "feature": "links",
+                "operator": "+=",
+                "terminal": {
+                  "$type": "RuleCall",
+                  "rule": {
+                    "$refText": "WireDefinition"
+                  },
+                  "arguments": []
+                }
+              },
+              {
+                "$type": "Keyword",
+                "value": ";"
+              }
+            ]
+          },
+          {
+            "$type": "Assignment",
+            "feature": "matches",
+            "operator": "+=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$refText": "PatternMatching"
+              },
+              "arguments": []
+            }
+          }
+        ],
+        "cardinality": "*"
+      },
+      "definesHiddenTokens": false,
+      "entry": false,
+      "fragment": false,
+      "hiddenTokens": [],
+      "parameters": [],
+      "wildcard": false
+    },
+    {
+      "$type": "ParserRule",
+      "name": "PatternMatching",
+      "alternatives": {
+        "$type": "Group",
+        "elements": [
+          {
+            "$type": "Keyword",
+            "value": "match"
+          },
+          {
+            "$type": "Assignment",
+            "feature": "source",
+            "operator": "=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$refText": "WireTargetExpression"
+              },
+              "arguments": []
+            }
+          },
+          {
+            "$type": "Keyword",
+            "value": "with"
+          },
+          {
+            "$type": "Keyword",
+            "value": "{"
+          },
+          {
+            "$type": "Assignment",
+            "feature": "matches",
+            "operator": "+=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$refText": "PatternMatchDefinition"
+              },
+              "arguments": []
+            },
             "cardinality": "*"
           },
           {
             "$type": "Keyword",
             "value": "}"
+          }
+        ]
+      },
+      "definesHiddenTokens": false,
+      "entry": false,
+      "fragment": false,
+      "hiddenTokens": [],
+      "parameters": [],
+      "wildcard": false
+    },
+    {
+      "$type": "ParserRule",
+      "name": "PatternMatchDefinition",
+      "alternatives": {
+        "$type": "Group",
+        "elements": [
+          {
+            "$type": "Keyword",
+            "value": "case"
+          },
+          {
+            "$type": "Assignment",
+            "feature": "pattern",
+            "operator": "=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$refText": "Pattern"
+              },
+              "arguments": []
+            }
+          },
+          {
+            "$type": "Keyword",
+            "value": "{"
+          },
+          {
+            "$type": "Assignment",
+            "feature": "body",
+            "operator": "=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$refText": "ImplementationBody"
+              },
+              "arguments": []
+            }
+          },
+          {
+            "$type": "Keyword",
+            "value": "}"
+          }
+        ]
+      },
+      "definesHiddenTokens": false,
+      "entry": false,
+      "fragment": false,
+      "hiddenTokens": [],
+      "parameters": [],
+      "wildcard": false
+    },
+    {
+      "$type": "ParserRule",
+      "name": "Pattern",
+      "alternatives": {
+        "$type": "Group",
+        "elements": [
+          {
+            "$type": "Assignment",
+            "feature": "name",
+            "operator": "=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$refText": "UPPER_ID"
+              },
+              "arguments": []
+            }
+          },
+          {
+            "$type": "Keyword",
+            "value": ":"
+          },
+          {
+            "$type": "Assignment",
+            "feature": "type",
+            "operator": "=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$refText": "DataType"
+              },
+              "arguments": []
+            }
           }
         ]
       },
@@ -158,7 +615,7 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ||(loadedBifro
         "elements": [
           {
             "$type": "Keyword",
-            "value": "from"
+            "value": "wire"
           },
           {
             "$type": "Assignment",
@@ -200,6 +657,89 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ||(loadedBifro
     {
       "$type": "ParserRule",
       "name": "WireTargetExpression",
+      "alternatives": {
+        "$type": "Group",
+        "elements": [
+          {
+            "$type": "RuleCall",
+            "rule": {
+              "$refText": "WireTargetAddition"
+            },
+            "arguments": []
+          },
+          {
+            "$type": "Group",
+            "elements": [
+              {
+                "$type": "Action",
+                "inferredType": {
+                  "$type": "InferredType",
+                  "name": "BinaryWireTargetExpression"
+                },
+                "feature": "left",
+                "operator": "="
+              },
+              {
+                "$type": "Assignment",
+                "feature": "op",
+                "operator": "=",
+                "terminal": {
+                  "$type": "Alternatives",
+                  "elements": [
+                    {
+                      "$type": "Keyword",
+                      "value": "=="
+                    },
+                    {
+                      "$type": "Keyword",
+                      "value": "!="
+                    },
+                    {
+                      "$type": "Keyword",
+                      "value": "<"
+                    },
+                    {
+                      "$type": "Keyword",
+                      "value": ">"
+                    },
+                    {
+                      "$type": "Keyword",
+                      "value": "<="
+                    },
+                    {
+                      "$type": "Keyword",
+                      "value": ">="
+                    }
+                  ]
+                }
+              },
+              {
+                "$type": "Assignment",
+                "feature": "right",
+                "operator": "=",
+                "terminal": {
+                  "$type": "RuleCall",
+                  "rule": {
+                    "$refText": "WireTargetAddition"
+                  },
+                  "arguments": []
+                }
+              }
+            ],
+            "cardinality": "*"
+          }
+        ]
+      },
+      "definesHiddenTokens": false,
+      "entry": false,
+      "fragment": false,
+      "hiddenTokens": [],
+      "parameters": [],
+      "wildcard": false
+    },
+    {
+      "$type": "ParserRule",
+      "name": "WireTargetAddition",
       "alternatives": {
         "$type": "Group",
         "elements": [
@@ -349,6 +889,13 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ||(loadedBifro
             "$type": "Group",
             "elements": [
               {
+                "$type": "Action",
+                "inferredType": {
+                  "$type": "InferredType",
+                  "name": "SelfInstancePortExpression"
+                }
+              },
+              {
                 "$type": "Keyword",
                 "value": "this"
               },
@@ -368,7 +915,7 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ||(loadedBifro
                   "terminal": {
                     "$type": "RuleCall",
                     "rule": {
-                      "$refText": "ID"
+                      "$refText": "UPPER_ID"
                     },
                     "arguments": []
                   },
@@ -380,6 +927,13 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ||(loadedBifro
           {
             "$type": "Group",
             "elements": [
+              {
+                "$type": "Action",
+                "inferredType": {
+                  "$type": "InferredType",
+                  "name": "ForeignInstancePortExpression"
+                }
+              },
               {
                 "$type": "Assignment",
                 "feature": "instanceRef",
@@ -408,7 +962,7 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ||(loadedBifro
                   "terminal": {
                     "$type": "RuleCall",
                     "rule": {
-                      "$refText": "ID"
+                      "$refText": "UPPER_ID"
                     },
                     "arguments": []
                   },
@@ -418,28 +972,84 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ||(loadedBifro
             ]
           },
           {
-            "$type": "Assignment",
-            "feature": "number",
-            "operator": "=",
-            "terminal": {
-              "$type": "RuleCall",
-              "rule": {
-                "$refText": "INT"
+            "$type": "Group",
+            "elements": [
+              {
+                "$type": "Action",
+                "inferredType": {
+                  "$type": "InferredType",
+                  "name": "NumericLiteral"
+                }
               },
-              "arguments": []
-            }
+              {
+                "$type": "Assignment",
+                "feature": "number",
+                "operator": "=",
+                "terminal": {
+                  "$type": "RuleCall",
+                  "rule": {
+                    "$refText": "INT"
+                  },
+                  "arguments": []
+                }
+              }
+            ]
           },
           {
-            "$type": "Assignment",
-            "feature": "string",
-            "operator": "=",
-            "terminal": {
-              "$type": "RuleCall",
-              "rule": {
-                "$refText": "STRING"
+            "$type": "Group",
+            "elements": [
+              {
+                "$type": "Action",
+                "inferredType": {
+                  "$type": "InferredType",
+                  "name": "StringLiteral"
+                }
               },
-              "arguments": []
-            }
+              {
+                "$type": "Assignment",
+                "feature": "string",
+                "operator": "=",
+                "terminal": {
+                  "$type": "RuleCall",
+                  "rule": {
+                    "$refText": "STRING"
+                  },
+                  "arguments": []
+                }
+              }
+            ]
+          },
+          {
+            "$type": "Group",
+            "elements": [
+              {
+                "$type": "Action",
+                "inferredType": {
+                  "$type": "InferredType",
+                  "name": "ParenthesesWireTargetExpression"
+                }
+              },
+              {
+                "$type": "Keyword",
+                "value": "("
+              },
+              {
+                "$type": "Assignment",
+                "feature": "expression",
+                "operator": "=",
+                "terminal": {
+                  "$type": "RuleCall",
+                  "rule": {
+                    "$refText": "WireTargetExpression"
+                  },
+                  "arguments": []
+                }
+              },
+              {
+                "$type": "Keyword",
+                "value": ")"
+              }
+            ]
           }
         ]
       },
@@ -467,7 +1077,7 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ||(loadedBifro
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$refText": "ID"
+                "$refText": "UPPER_ID"
               },
               "arguments": []
             }
@@ -522,7 +1132,7 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ||(loadedBifro
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$refText": "ID"
+                "$refText": "UPPER_ID"
               },
               "arguments": []
             }
@@ -603,10 +1213,20 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ||(loadedBifro
     },
     {
       "$type": "TerminalRule",
-      "name": "ID",
+      "name": "LOWER_ID",
       "terminal": {
         "$type": "RegexToken",
-        "regex": "[_a-zA-Z][\\\\w_]*"
+        "regex": "[a-z][\\\\w_]*"
+      },
+      "fragment": false,
+      "hidden": false
+    },
+    {
+      "$type": "TerminalRule",
+      "name": "UPPER_ID",
+      "terminal": {
+        "$type": "RegexToken",
+        "regex": "[_A-Z][\\\\w_]*"
       },
       "fragment": false,
       "hidden": false

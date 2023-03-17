@@ -1,13 +1,20 @@
+datatype Tree a {
+  Leaf a,
+  Branch (Tree a) (Tree a)
+}
+
 module Fibonacci {
   interface:
-    in n: int
-    out result: int
+    in N: int
+    out Result: int
   implementation:
-    when this.n <= 2 {
-      instance NMinusOne of Fibonacci;
-      instance NMinusTwo of Fibonacci;
-      from this.n - 1 to NMinusOne.n;
-      from this.n - 2 to NMinusTwo.n;
-      from NMinusOne.result + NMinusTwo.result to this.result;
+    match this.N with {
+      case A: int {
+        instance NMinusOne of Fibonacci;
+        instance NMinusTwo of Fibonacci;
+        wire this.N - 1 to NMinusOne.N;
+        wire this.N- 2 to NMinusTwo.N;
+        wire NMinusOne.Result + NMinusTwo.Result to this.Result;
+      }
     }
 }
