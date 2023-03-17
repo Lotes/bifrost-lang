@@ -1,14 +1,23 @@
-import { ValidationRegistry } from 'langium';
+import { ValidationChecks } from 'langium';
+import { BifrostAstType } from './generated/ast';
 import type { BifrostServices } from './bifrost-module';
 
 /**
- * Registry for validation checks.
+ * Register custom validation checks.
  */
-export class BifrostValidationRegistry extends ValidationRegistry {
-    constructor(services: BifrostServices) {
-        super(services);
-        //const validator = services.validation.BifrostValidator;
-        //const checks: ValidationChecks<BifrostAstType> = {};
-        //this.register(checks, validator);
-    }
+export function registerValidationChecks(services: BifrostServices) {
+    const registry = services.validation.ValidationRegistry;
+    const validator = services.validation.BifrostValidator;
+    const checks: ValidationChecks<BifrostAstType> = {
+        
+    };
+    registry.register(checks, validator);
+}
+
+/**
+ * Implementation of custom validations.
+ */
+export class BifrostValidator {
+
+
 }

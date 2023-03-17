@@ -3,13 +3,14 @@ import {
     LangiumServices, LangiumSharedServices, Module, PartialLangiumServices
 } from 'langium';
 import { BifrostGeneratedModule, BifrostGeneratedSharedModule } from './generated/module';
-import { BifrostValidationRegistry } from './bifrost-validator';
+import { BifrostValidator, registerValidationChecks } from './bifrost-validator';
 
 /**
  * Declaration of custom services - add your own service classes here.
  */
 export type BifrostAddedServices = {
     validation: {
+        BifrostValidator: BifrostValidator
     }
 }
 
@@ -26,10 +27,7 @@ export type BifrostServices = LangiumServices & BifrostAddedServices
  */
 export const BifrostModule: Module<BifrostServices, PartialLangiumServices & BifrostAddedServices> = {
     validation: {
-        ValidationRegistry: (services) => new BifrostValidationRegistry(services),
-    },
-    references: {
-        ScopeProvider: (services) => new BifrostScopeProvider(services)
+        BifrostValidator: () => new BifrostValidator()
     }
 };
 
@@ -48,7 +46,7 @@ export const BifrostModule: Module<BifrostServices, PartialLangiumServices & Bif
  * @param context Optional module context with the LSP connection
  * @returns An object wrapping the shared services and the language-specific services
  */
-export function createBifrostServices(context?: DefaultSharedModuleContext): {
+export function createBifrostServices(context: DefaultSharedModuleContext): {
     shared: LangiumSharedServices,
     Bifrost: BifrostServices
 } {
@@ -62,5 +60,6 @@ export function createBifrostServices(context?: DefaultSharedModuleContext): {
         BifrostModule
     );
     shared.ServiceRegistry.register(Bifrost);
+    registerValidationChecks(Bifrost);
     return { shared, Bifrost };
 }

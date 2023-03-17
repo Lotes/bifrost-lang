@@ -1,4 +1,5 @@
 import { startLanguageServer } from 'langium';
+import { NodeFileSystem } from 'langium/node';
 import { createConnection, ProposedFeatures } from 'vscode-languageserver/node';
 import { createBifrostServices } from './bifrost-module';
 
@@ -6,7 +7,7 @@ import { createBifrostServices } from './bifrost-module';
 const connection = createConnection(ProposedFeatures.all);
 
 // Inject the shared services and language-specific services
-const { shared } = createBifrostServices({ connection });
+const { shared } = createBifrostServices({ connection, ...NodeFileSystem });
 
 // Start the language server with the shared services
 startLanguageServer(shared);
