@@ -4,6 +4,7 @@ import {
 } from 'langium';
 import { BifrostGeneratedModule, BifrostGeneratedSharedModule } from './generated/module';
 import { BifrostValidator, registerValidationChecks } from './bifrost-validator';
+import { BifrostScopeProvider } from './bifrost-scope-provider';
 
 /**
  * Declaration of custom services - add your own service classes here.
@@ -28,6 +29,9 @@ export type BifrostServices = LangiumServices & BifrostAddedServices
 export const BifrostModule: Module<BifrostServices, PartialLangiumServices & BifrostAddedServices> = {
     validation: {
         BifrostValidator: () => new BifrostValidator()
+    },
+    references: {
+        ScopeProvider: (services) => new BifrostScopeProvider(services)
     }
 };
 

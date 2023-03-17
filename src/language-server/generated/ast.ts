@@ -48,7 +48,15 @@ export function isPrimary(item: unknown): item is Primary {
     return reflection.isInstance(item, Primary);
 }
 
-export type SignatureType = DataTypeDefinition | ImplementationDefinition | InterfaceDefinition;
+export type ProcessSignatureType = ImplementationDefinition | InterfaceDefinition;
+
+export const ProcessSignatureType = 'ProcessSignatureType';
+
+export function isProcessSignatureType(item: unknown): item is ProcessSignatureType {
+    return reflection.isInstance(item, ProcessSignatureType);
+}
+
+export type SignatureType = DataTypeDefinition | ProcessSignatureType;
 
 export const SignatureType = 'SignatureType';
 
@@ -249,6 +257,7 @@ export function isMatchVariableUsage(item: unknown): item is MatchVariableUsage 
 export interface ModuleInstance extends AstNode {
     readonly $container: ImplementationBody;
     readonly $type: 'ModuleInstance';
+    arguments: Array<TypeExpression>
     module: Reference<ImplementationDefinition>
     name: string
 }
@@ -272,7 +281,7 @@ export function isNumericLiteral(item: unknown): item is NumericLiteral {
 }
 
 export interface ParenthesesTypeExpression extends AstNode {
-    readonly $container: DataTypeConstructorDefinition | ImplementationDefinition | ParenthesesTypeExpression | TypeApplication | TypeConstructor;
+    readonly $container: DataTypeConstructorDefinition | ImplementationDefinition | ModuleInstance | ParenthesesTypeExpression | TypeApplication | TypeConstructor;
     readonly $type: 'ParenthesesTypeExpression';
     type: TypeExpression
 }
@@ -371,7 +380,7 @@ export function isStringLiteral(item: unknown): item is StringLiteral {
 }
 
 export interface TypeApplication extends AstNode {
-    readonly $container: DataTypeConstructorDefinition | ImplementationDefinition | ParenthesesTypeExpression | TypeApplication | TypeConstructor;
+    readonly $container: DataTypeConstructorDefinition | ImplementationDefinition | ModuleInstance | ParenthesesTypeExpression | TypeApplication | TypeConstructor;
     readonly $type: 'TypeApplication';
     dataType: Reference<SignatureType>
     typeParameters: Array<TypeExpression>
@@ -408,7 +417,7 @@ export function isTypeParameter(item: unknown): item is TypeParameter {
 }
 
 export interface TypeParameterReference extends AstNode {
-    readonly $container: DataTypeConstructorDefinition | ImplementationDefinition | ParenthesesTypeExpression | TypeApplication | TypeConstructor;
+    readonly $container: DataTypeConstructorDefinition | ImplementationDefinition | ModuleInstance | ParenthesesTypeExpression | TypeApplication | TypeConstructor;
     readonly $type: 'TypeParameterReference';
     typeParameter: Reference<TypeParameter>
 }
@@ -459,6 +468,7 @@ export interface BifrostAstType {
     PatternMatching: PatternMatching
     PortDefinition: PortDefinition
     Primary: Primary
+    ProcessSignatureType: ProcessSignatureType
     SelfInstancePortExpression: SelfInstancePortExpression
     SignatureType: SignatureType
     StringConstructor: StringConstructor
@@ -474,7 +484,7 @@ export interface BifrostAstType {
 export class BifrostAstReflection extends AbstractAstReflection {
 
     getAllTypes(): string[] {
-        return ['Addition', 'BinaryWireTargetExpression', 'BooleanConstructor', 'ConstructorApplication', 'DataType', 'DataTypeConstructorDefinition', 'DataTypeDefinition', 'Expression', 'Factor', 'File', 'FloatConstructor', 'ForeignInstancePortExpression', 'ImplementationBody', 'ImplementationDefinition', 'IntegerConstructor', 'InterfaceDefinition', 'MatchVariableDefinition', 'MatchVariableUsage', 'ModuleInstance', 'NumericLiteral', 'ParenthesesTypeExpression', 'ParenthesesWireTargetExpression', 'PatternMatchDefinition', 'PatternMatching', 'PortDefinition', 'Primary', 'SelfInstancePortExpression', 'SignatureType', 'StringConstructor', 'StringLiteral', 'TypeApplication', 'TypeConstructor', 'TypeExpression', 'TypeParameter', 'TypeParameterReference', 'WireDefinition'];
+        return ['Addition', 'BinaryWireTargetExpression', 'BooleanConstructor', 'ConstructorApplication', 'DataType', 'DataTypeConstructorDefinition', 'DataTypeDefinition', 'Expression', 'Factor', 'File', 'FloatConstructor', 'ForeignInstancePortExpression', 'ImplementationBody', 'ImplementationDefinition', 'IntegerConstructor', 'InterfaceDefinition', 'MatchVariableDefinition', 'MatchVariableUsage', 'ModuleInstance', 'NumericLiteral', 'ParenthesesTypeExpression', 'ParenthesesWireTargetExpression', 'PatternMatchDefinition', 'PatternMatching', 'PortDefinition', 'Primary', 'ProcessSignatureType', 'SelfInstancePortExpression', 'SignatureType', 'StringConstructor', 'StringLiteral', 'TypeApplication', 'TypeConstructor', 'TypeExpression', 'TypeParameter', 'TypeParameterReference', 'WireDefinition'];
     }
 
     protected override computeIsSubtype(subtype: string, supertype: string): boolean {
@@ -503,12 +513,15 @@ export class BifrostAstReflection extends AbstractAstReflection {
                 return this.isSubtype(Primary, supertype);
             }
             case DataTypeDefinition:
-            case ImplementationDefinition:
-            case InterfaceDefinition: {
+            case ProcessSignatureType: {
                 return this.isSubtype(SignatureType, supertype);
             }
             case Factor: {
                 return this.isSubtype(Addition, supertype);
+            }
+            case ImplementationDefinition:
+            case InterfaceDefinition: {
+                return this.isSubtype(ProcessSignatureType, supertype);
             }
             case ParenthesesTypeExpression:
             case TypeApplication:
@@ -621,6 +634,14 @@ export class BifrostAstReflection extends AbstractAstReflection {
                     mandatory: [
                         { name: 'ports', type: 'array' },
                         { name: 'typeParameters', type: 'array' }
+                    ]
+                };
+            }
+            case 'ModuleInstance': {
+                return {
+                    name: 'ModuleInstance',
+                    mandatory: [
+                        { name: 'arguments', type: 'array' }
                     ]
                 };
             }

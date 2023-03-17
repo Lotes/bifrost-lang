@@ -8,7 +8,8 @@ entry File:
     )*
     ;
 
-type SignatureType = DataTypeDefinition | InterfaceDefinition | ImplementationDefinition;
+type ProcessSignatureType = InterfaceDefinition | ImplementationDefinition;
+type SignatureType = DataTypeDefinition | ProcessSignatureType;
 
 DataTypeDefinition:
     'datatype' name=UPPER_ID typeParameters+=TypeParameter* '{'
@@ -89,7 +90,7 @@ Primary:
      ;
 
 ModuleInstance:
-    'instance' name=LOWER_ID 'of' module=[ImplementationDefinition]
+    'instance' name=LOWER_ID 'of' module=[ImplementationDefinition] arguments+=TypeExpression*
     ;
 
 PortDefinition: direction=Direction name=LOWER_ID 'of' type=DataType;

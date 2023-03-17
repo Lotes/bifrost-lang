@@ -1,5 +1,6 @@
-import { assertUnreachable, AstNode, AstTypeList, DefaultScopeProvider, Reference, ReferenceInfo, Scope } from "langium";
-import { BifrostAstType, isConstructorApplication, isDataType, isForeignInstancePortExpression, isImplementationDefinition, isMatchVariableUsage, isModuleInstance, isSelfInstancePortExpression, isTypeApplication, isTypeParameterReference } from "./generated/ast";
+import { assertUnreachable, AstNode, AstNodeDescriptionProvider, AstTypeList, DefaultScopeProvider, getContainerOfType, Reference, ReferenceInfo, Scope, stream } from "langium";
+import { BifrostServices } from "./bifrost-module";
+import { BifrostAstType, DataTypeDefinition, ImplementationBody, ImplementationDefinition, InterfaceDefinition, isConstructorApplication, isDataType, isForeignInstancePortExpression, isImplementationBody, isImplementationDefinition, isMatchVariableUsage, isModuleInstance, isSelfInstancePortExpression, isSignatureType, isTypeApplication, isTypeParameterReference } from "./generated/ast";
 
 type ExtractKeysOfValueType<T, K> = { [I in keyof T]: T[I] extends K ? I : never }[keyof T];
 
@@ -14,13 +15,20 @@ export type AstNodeTypesWithCrossReferences<A extends AstTypeList<A>> = {
 }[keyof A];
 
 export class BifrostScopeProvider extends DefaultScopeProvider {
+  private astNodeDescriptionProvider: AstNodeDescriptionProvider;
+  constructor(services: BifrostServices) {
+    super(services);
+    this.astNodeDescriptionProvider = services.workspace.AstNodeDescriptionProvider;
+  }
   override getScope(context: ReferenceInfo): Scope {
     const node = context.container as AstNodeTypesWithCrossReferences<BifrostAstType>;
     if(isTypeParameterReference(node)) {
       const property = context.property as CrossReferencesOfAstNodeType<typeof node>;
       switch(property) {
         case 'typeParameter':
-          return undefined!;
+          const descriptions = getContainerOfType(node, isSignatureType)!.typeParameters
+            .map(tp  => this.astNodeDescriptionProvider.createDescription(tp, tp.name));
+          return this.createScope(stream(descriptions))
         default:
           assertUnreachable(property);
       }
@@ -28,9 +36,18 @@ export class BifrostScopeProvider extends DefaultScopeProvider {
       const property = context.property as CrossReferencesOfAstNodeType<typeof node>;
       switch(property) {
         case 'instanceRef':
-          return undefined!;
+          const body = getContainerOfType(node, isImplementationBody)!;
+          return this.getInstancesFromImplementationBody(body);        
         case 'portRef':
-          return undefined!;
+          const instance = node.instanceRef.ref;
+          if(instance) {
+            const module = instance.module.ref;
+            if(module) {
+              const descriptions = module.ports.map(port => this.astNodeDescriptionProvider.createDescription(port, port.name));
+              return this.createScope(stream(descriptions));
+            }
+          }
+          break;
         default:
           assertUnreachable(property);
       }
@@ -38,7 +55,9 @@ export class BifrostScopeProvider extends DefaultScopeProvider {
       const property = context.property as CrossReferencesOfAstNodeType<typeof node>;
       switch(property) {
         case 'portRef':
-          return undefined!;
+          const implementation = getContainerOfType(node, isImplementationDefinition)!;
+          const descriptions = implementation.ports.map(port => this.astNodeDescriptionProvider.createDescription(port, port.name));
+          return this.createScope(stream(descriptions));
         default:
           assertUnreachable(property);
       }
@@ -46,7 +65,8 @@ export class BifrostScopeProvider extends DefaultScopeProvider {
       const property = context.property as CrossReferencesOfAstNodeType<typeof node>;
       switch(property) {
         case 'dataType':
-          return undefined!;
+          const descriptions = [DataTypeDefinition, InterfaceDefinition, ImplementationDefinition].flatMap(tp => this.indexManager.allElements(tp).toArray());
+          return this.createScope(descriptions)
         default:
           assertUnreachable(property);
       }
@@ -62,11 +82,11 @@ export class BifrostScopeProvider extends DefaultScopeProvider {
       const property = context.property as CrossReferencesOfAstNodeType<typeof node>;
       switch(property) {
         case 'module':
-          return undefined!;
+          return this.createScope(this.indexManager.allElements(ImplementationDefinition).toArray());
         default:
           assertUnreachable(property);
       }
-    } if(isConstructorApplication(node)) {
+    } else if(isConstructorApplication(node)) {
       const property = context.property as CrossReferencesOfAstNodeType<typeof node>;
       switch(property) {
         case 'constructor':
@@ -74,7 +94,7 @@ export class BifrostScopeProvider extends DefaultScopeProvider {
         default:
           assertUnreachable(property);
       }
-    } if(isMatchVariableUsage(node)) {
+    } else if(isMatchVariableUsage(node)) {
       const property = context.property as CrossReferencesOfAstNodeType<typeof node>;
       switch(property) {
         case 'variable':
@@ -93,7 +113,12 @@ export class BifrostScopeProvider extends DefaultScopeProvider {
     } else {
       assertUnreachable(node);
     }
-
     return super.getScope(context);
   } 
+  getInstancesFromImplementationBody(body: ImplementationBody): Scope {
+    const descriptions = body.modules.map(module => this.astNodeDescriptionProvider.createDescription(module, module.name));
+    const parentBody = getContainerOfType(body.$container, isImplementationBody);
+    const outerScope = parentBody ? this.getInstancesFromImplementationBody(parentBody) : undefined;
+    return this.createScope(stream(descriptions), outerScope);
+  }
 }

@@ -258,7 +258,7 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ?? (loadedBifr
                 "terminal": {
                   "$type": "CrossReference",
                   "type": {
-                    "$ref": "#/types@0"
+                    "$ref": "#/types@1"
                   },
                   "deprecatedSyntax": false
                 }
@@ -1277,6 +1277,19 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ?? (loadedBifr
               },
               "deprecatedSyntax": false
             }
+          },
+          {
+            "$type": "Assignment",
+            "feature": "arguments",
+            "operator": "+=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$ref": "#/rules@4"
+              },
+              "arguments": []
+            },
+            "cardinality": "*"
           }
         ]
       },
@@ -1543,6 +1556,27 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ?? (loadedBifr
   "types": [
     {
       "$type": "Type",
+      "name": "ProcessSignatureType",
+      "type": {
+        "$type": "UnionType",
+        "types": [
+          {
+            "$type": "SimpleType",
+            "typeRef": {
+              "$ref": "#/rules@5"
+            }
+          },
+          {
+            "$type": "SimpleType",
+            "typeRef": {
+              "$ref": "#/rules@6"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "$type": "Type",
       "name": "SignatureType",
       "type": {
         "$type": "UnionType",
@@ -1556,13 +1590,7 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ?? (loadedBifr
           {
             "$type": "SimpleType",
             "typeRef": {
-              "$ref": "#/rules@5"
-            }
-          },
-          {
-            "$type": "SimpleType",
-            "typeRef": {
-              "$ref": "#/rules@6"
+              "$ref": "#/types@0"
             }
           }
         ]
