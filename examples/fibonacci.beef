@@ -1,11 +1,6 @@
-datatype Tree a {
-  Leaf a,
-  Branch (Tree a) (Tree a)
-}
-
 implementation Fibonacci { 
-  in n: int;
-  out result: int;
+  in n of Integer;
+  out result of Integer;
   match this.n with {
     case 0 {
       wire 0 to this.result;
@@ -13,7 +8,7 @@ implementation Fibonacci {
     case 1 {
       wire 1 to this.result;
     }
-    case x {
+    case x? {
       instance minusOne of Fibonacci;
       instance minusTwo of Fibonacci;
       wire x - 1 to minusOne.n;

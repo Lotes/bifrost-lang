@@ -80,7 +80,7 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ?? (loadedBifr
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@22"
+                "$ref": "#/rules@21"
               },
               "arguments": []
             }
@@ -159,7 +159,7 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ?? (loadedBifr
         "terminal": {
           "$type": "RuleCall",
           "rule": {
-            "$ref": "#/rules@21"
+            "$ref": "#/rules@20"
           },
           "arguments": []
         }
@@ -184,7 +184,7 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ?? (loadedBifr
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@22"
+                "$ref": "#/rules@21"
               },
               "arguments": []
             }
@@ -258,7 +258,7 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ?? (loadedBifr
                 "terminal": {
                   "$type": "CrossReference",
                   "type": {
-                    "$ref": "#/rules@1"
+                    "$ref": "#/types@0"
                   },
                   "deprecatedSyntax": false
                 }
@@ -336,10 +336,23 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ?? (loadedBifr
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@22"
+                "$ref": "#/rules@21"
               },
               "arguments": []
             }
+          },
+          {
+            "$type": "Assignment",
+            "feature": "typeParameters",
+            "operator": "+=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$ref": "#/rules@2"
+              },
+              "arguments": []
+            },
+            "cardinality": "*"
           },
           {
             "$type": "Keyword",
@@ -355,7 +368,7 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ?? (loadedBifr
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@17"
+                    "$ref": "#/rules@16"
                   },
                   "arguments": []
                 }
@@ -397,10 +410,23 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ?? (loadedBifr
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@22"
+                "$ref": "#/rules@21"
               },
               "arguments": []
             }
+          },
+          {
+            "$type": "Assignment",
+            "feature": "typeParameters",
+            "operator": "+=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$ref": "#/rules@2"
+              },
+              "arguments": []
+            },
+            "cardinality": "*"
           },
           {
             "$type": "Group",
@@ -420,6 +446,19 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ?? (loadedBifr
                   },
                   "deprecatedSyntax": false
                 }
+              },
+              {
+                "$type": "Assignment",
+                "feature": "arguments",
+                "operator": "+=",
+                "terminal": {
+                  "$type": "RuleCall",
+                  "rule": {
+                    "$ref": "#/rules@4"
+                  },
+                  "arguments": []
+                },
+                "cardinality": "*"
               }
             ],
             "cardinality": "?"
@@ -438,7 +477,7 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ?? (loadedBifr
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@17"
+                    "$ref": "#/rules@16"
                   },
                   "arguments": []
                 }
@@ -491,7 +530,7 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ?? (loadedBifr
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@16"
+                    "$ref": "#/rules@15"
                   },
                   "arguments": []
                 }
@@ -512,7 +551,7 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ?? (loadedBifr
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@11"
+                    "$ref": "#/rules@10"
                   },
                   "arguments": []
                 }
@@ -562,7 +601,7 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ?? (loadedBifr
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@12"
+                "$ref": "#/rules@11"
               },
               "arguments": []
             }
@@ -618,7 +657,7 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ?? (loadedBifr
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@10"
+                "$ref": "#/rules@11"
               },
               "arguments": []
             }
@@ -654,49 +693,6 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ?? (loadedBifr
     },
     {
       "$type": "ParserRule",
-      "name": "Pattern",
-      "definition": {
-        "$type": "Group",
-        "elements": [
-          {
-            "$type": "Assignment",
-            "feature": "name",
-            "operator": "=",
-            "terminal": {
-              "$type": "RuleCall",
-              "rule": {
-                "$ref": "#/rules@22"
-              },
-              "arguments": []
-            }
-          },
-          {
-            "$type": "Keyword",
-            "value": ":"
-          },
-          {
-            "$type": "Assignment",
-            "feature": "type",
-            "operator": "=",
-            "terminal": {
-              "$type": "RuleCall",
-              "rule": {
-                "$ref": "#/rules@18"
-              },
-              "arguments": []
-            }
-          }
-        ]
-      },
-      "definesHiddenTokens": false,
-      "entry": false,
-      "fragment": false,
-      "hiddenTokens": [],
-      "parameters": [],
-      "wildcard": false
-    },
-    {
-      "$type": "ParserRule",
       "name": "WireDefinition",
       "definition": {
         "$type": "Group",
@@ -712,7 +708,7 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ?? (loadedBifr
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@12"
+                "$ref": "#/rules@11"
               },
               "arguments": []
             }
@@ -728,7 +724,7 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ?? (loadedBifr
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@12"
+                "$ref": "#/rules@11"
               },
               "arguments": []
             }
@@ -744,14 +740,14 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ?? (loadedBifr
     },
     {
       "$type": "ParserRule",
-      "name": "WireTargetExpression",
+      "name": "Expression",
       "definition": {
         "$type": "Group",
         "elements": [
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@13"
+              "$ref": "#/rules@12"
             },
             "arguments": []
           },
@@ -808,7 +804,7 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ?? (loadedBifr
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@13"
+                    "$ref": "#/rules@12"
                   },
                   "arguments": []
                 }
@@ -827,14 +823,14 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ?? (loadedBifr
     },
     {
       "$type": "ParserRule",
-      "name": "WireTargetAddition",
+      "name": "Addition",
       "definition": {
         "$type": "Group",
         "elements": [
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@14"
+              "$ref": "#/rules@13"
             },
             "arguments": []
           },
@@ -875,7 +871,7 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ?? (loadedBifr
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@14"
+                    "$ref": "#/rules@13"
                   },
                   "arguments": []
                 }
@@ -894,14 +890,14 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ?? (loadedBifr
     },
     {
       "$type": "ParserRule",
-      "name": "WireTargetFactor",
+      "name": "Factor",
       "definition": {
         "$type": "Group",
         "elements": [
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@15"
+              "$ref": "#/rules@14"
             },
             "arguments": []
           },
@@ -950,7 +946,7 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ?? (loadedBifr
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@15"
+                    "$ref": "#/rules@14"
                   },
                   "arguments": []
                 }
@@ -969,7 +965,7 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ?? (loadedBifr
     },
     {
       "$type": "ParserRule",
-      "name": "WireTargetPrimary",
+      "name": "Primary",
       "definition": {
         "$type": "Alternatives",
         "elements": [
@@ -998,12 +994,12 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ?? (loadedBifr
                 "terminal": {
                   "$type": "CrossReference",
                   "type": {
-                    "$ref": "#/rules@17"
+                    "$ref": "#/rules@16"
                   },
                   "terminal": {
                     "$type": "RuleCall",
                     "rule": {
-                      "$ref": "#/rules@21"
+                      "$ref": "#/rules@20"
                     },
                     "arguments": []
                   },
@@ -1029,7 +1025,7 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ?? (loadedBifr
                 "terminal": {
                   "$type": "CrossReference",
                   "type": {
-                    "$ref": "#/rules@16"
+                    "$ref": "#/rules@15"
                   },
                   "deprecatedSyntax": false
                 }
@@ -1045,12 +1041,12 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ?? (loadedBifr
                 "terminal": {
                   "$type": "CrossReference",
                   "type": {
-                    "$ref": "#/rules@17"
+                    "$ref": "#/rules@16"
                   },
                   "terminal": {
                     "$type": "RuleCall",
                     "rule": {
-                      "$ref": "#/rules@21"
+                      "$ref": "#/rules@20"
                     },
                     "arguments": []
                   },
@@ -1076,7 +1072,7 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ?? (loadedBifr
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@23"
+                    "$ref": "#/rules@22"
                   },
                   "arguments": []
                 }
@@ -1100,7 +1096,7 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ?? (loadedBifr
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@24"
+                    "$ref": "#/rules@23"
                   },
                   "arguments": []
                 }
@@ -1128,7 +1124,7 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ?? (loadedBifr
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@12"
+                    "$ref": "#/rules@11"
                   },
                   "arguments": []
                 }
@@ -1136,6 +1132,102 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ?? (loadedBifr
               {
                 "$type": "Keyword",
                 "value": ")"
+              }
+            ]
+          },
+          {
+            "$type": "Group",
+            "elements": [
+              {
+                "$type": "Action",
+                "inferredType": {
+                  "$type": "InferredType",
+                  "name": "ConstructorApplication"
+                }
+              },
+              {
+                "$type": "Assignment",
+                "feature": "constructor",
+                "operator": "=",
+                "terminal": {
+                  "$type": "CrossReference",
+                  "type": {
+                    "$ref": "#/rules@3"
+                  },
+                  "deprecatedSyntax": false
+                }
+              },
+              {
+                "$type": "Assignment",
+                "feature": "arguments",
+                "operator": "+=",
+                "terminal": {
+                  "$type": "RuleCall",
+                  "rule": {
+                    "$ref": "#/rules@14"
+                  },
+                  "arguments": []
+                },
+                "cardinality": "*"
+              }
+            ]
+          },
+          {
+            "$type": "Group",
+            "elements": [
+              {
+                "$type": "Action",
+                "inferredType": {
+                  "$type": "InferredType",
+                  "name": "MatchVariableDefinition"
+                }
+              },
+              {
+                "$type": "Assignment",
+                "feature": "name",
+                "operator": "=",
+                "terminal": {
+                  "$type": "RuleCall",
+                  "rule": {
+                    "$ref": "#/rules@20"
+                  },
+                  "arguments": []
+                }
+              },
+              {
+                "$type": "Keyword",
+                "value": "?"
+              }
+            ]
+          },
+          {
+            "$type": "Group",
+            "elements": [
+              {
+                "$type": "Action",
+                "inferredType": {
+                  "$type": "InferredType",
+                  "name": "MatchVariableUsage"
+                }
+              },
+              {
+                "$type": "Assignment",
+                "feature": "variable",
+                "operator": "=",
+                "terminal": {
+                  "$type": "CrossReference",
+                  "type": {
+                    "$ref": "#/rules@14/definition/elements@6/elements@0"
+                  },
+                  "terminal": {
+                    "$type": "RuleCall",
+                    "rule": {
+                      "$ref": "#/rules@20"
+                    },
+                    "arguments": []
+                  },
+                  "deprecatedSyntax": false
+                }
               }
             ]
           }
@@ -1165,7 +1257,7 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ?? (loadedBifr
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@21"
+                "$ref": "#/rules@20"
               },
               "arguments": []
             }
@@ -1208,7 +1300,7 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ?? (loadedBifr
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@19"
+                "$ref": "#/rules@18"
               },
               "arguments": []
             }
@@ -1220,14 +1312,14 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ?? (loadedBifr
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@21"
+                "$ref": "#/rules@20"
               },
               "arguments": []
             }
           },
           {
             "$type": "Keyword",
-            "value": ":"
+            "value": "of"
           },
           {
             "$type": "Assignment",
@@ -1236,7 +1328,7 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ?? (loadedBifr
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@18"
+                "$ref": "#/rules@17"
               },
               "arguments": []
             }
@@ -1253,10 +1345,98 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ?? (loadedBifr
     {
       "$type": "ParserRule",
       "name": "DataType",
-      "dataType": "string",
       "definition": {
-        "$type": "Keyword",
-        "value": "int"
+        "$type": "Alternatives",
+        "elements": [
+          {
+            "$type": "Group",
+            "elements": [
+              {
+                "$type": "Action",
+                "inferredType": {
+                  "$type": "InferredType",
+                  "name": "TypeConstructor"
+                }
+              },
+              {
+                "$type": "Assignment",
+                "feature": "expr",
+                "operator": "=",
+                "terminal": {
+                  "$type": "RuleCall",
+                  "rule": {
+                    "$ref": "#/rules@4"
+                  },
+                  "arguments": []
+                }
+              }
+            ]
+          },
+          {
+            "$type": "Group",
+            "elements": [
+              {
+                "$type": "Action",
+                "inferredType": {
+                  "$type": "InferredType",
+                  "name": "IntegerConstructor"
+                }
+              },
+              {
+                "$type": "Keyword",
+                "value": "Integer"
+              }
+            ]
+          },
+          {
+            "$type": "Group",
+            "elements": [
+              {
+                "$type": "Action",
+                "inferredType": {
+                  "$type": "InferredType",
+                  "name": "FloatConstructor"
+                }
+              },
+              {
+                "$type": "Keyword",
+                "value": "Float"
+              }
+            ]
+          },
+          {
+            "$type": "Group",
+            "elements": [
+              {
+                "$type": "Action",
+                "inferredType": {
+                  "$type": "InferredType",
+                  "name": "StringConstructor"
+                }
+              },
+              {
+                "$type": "Keyword",
+                "value": "String"
+              }
+            ]
+          },
+          {
+            "$type": "Group",
+            "elements": [
+              {
+                "$type": "Action",
+                "inferredType": {
+                  "$type": "InferredType",
+                  "name": "BooleanConstructor"
+                }
+              },
+              {
+                "$type": "Keyword",
+                "value": "Boolean"
+              }
+            ]
+          }
+        ]
       },
       "definesHiddenTokens": false,
       "entry": false,
@@ -1360,10 +1540,38 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ?? (loadedBifr
       "fragment": false
     }
   ],
+  "types": [
+    {
+      "$type": "Type",
+      "name": "SignatureType",
+      "type": {
+        "$type": "UnionType",
+        "types": [
+          {
+            "$type": "SimpleType",
+            "typeRef": {
+              "$ref": "#/rules@1"
+            }
+          },
+          {
+            "$type": "SimpleType",
+            "typeRef": {
+              "$ref": "#/rules@5"
+            }
+          },
+          {
+            "$type": "SimpleType",
+            "typeRef": {
+              "$ref": "#/rules@6"
+            }
+          }
+        ]
+      }
+    }
+  ],
   "definesHiddenTokens": false,
   "hiddenTokens": [],
   "imports": [],
   "interfaces": [],
-  "types": [],
   "usedGrammars": []
 }`));

@@ -6,9 +6,55 @@
 /* eslint-disable */
 import { AstNode, AbstractAstReflection, Reference, ReferenceInfo, TypeMetaData } from 'langium';
 
-export type DataType = 'int';
+export type Addition = BinaryWireTargetExpression | Factor;
+
+export const Addition = 'Addition';
+
+export function isAddition(item: unknown): item is Addition {
+    return reflection.isInstance(item, Addition);
+}
+
+export type DataType = BooleanConstructor | FloatConstructor | IntegerConstructor | StringConstructor | TypeConstructor;
+
+export const DataType = 'DataType';
+
+export function isDataType(item: unknown): item is DataType {
+    return reflection.isInstance(item, DataType);
+}
 
 export type Direction = 'in' | 'out';
+
+export type Expression = Addition | BinaryWireTargetExpression;
+
+export const Expression = 'Expression';
+
+export function isExpression(item: unknown): item is Expression {
+    return reflection.isInstance(item, Expression);
+}
+
+export type Factor = BinaryWireTargetExpression | Primary;
+
+export const Factor = 'Factor';
+
+export function isFactor(item: unknown): item is Factor {
+    return reflection.isInstance(item, Factor);
+}
+
+export type Primary = ConstructorApplication | ForeignInstancePortExpression | MatchVariableDefinition | MatchVariableUsage | NumericLiteral | ParenthesesWireTargetExpression | SelfInstancePortExpression | StringLiteral;
+
+export const Primary = 'Primary';
+
+export function isPrimary(item: unknown): item is Primary {
+    return reflection.isInstance(item, Primary);
+}
+
+export type SignatureType = DataTypeDefinition | ImplementationDefinition | InterfaceDefinition;
+
+export const SignatureType = 'SignatureType';
+
+export function isSignatureType(item: unknown): item is SignatureType {
+    return reflection.isInstance(item, SignatureType);
+}
 
 export type TypeExpression = ParenthesesTypeExpression | TypeApplication | TypeParameterReference;
 
@@ -18,50 +64,42 @@ export function isTypeExpression(item: unknown): item is TypeExpression {
     return reflection.isInstance(item, TypeExpression);
 }
 
-export type WireTargetAddition = BinaryWireTargetExpression | WireTargetFactor;
-
-export const WireTargetAddition = 'WireTargetAddition';
-
-export function isWireTargetAddition(item: unknown): item is WireTargetAddition {
-    return reflection.isInstance(item, WireTargetAddition);
-}
-
-export type WireTargetExpression = BinaryWireTargetExpression | WireTargetAddition;
-
-export const WireTargetExpression = 'WireTargetExpression';
-
-export function isWireTargetExpression(item: unknown): item is WireTargetExpression {
-    return reflection.isInstance(item, WireTargetExpression);
-}
-
-export type WireTargetFactor = BinaryWireTargetExpression | WireTargetPrimary;
-
-export const WireTargetFactor = 'WireTargetFactor';
-
-export function isWireTargetFactor(item: unknown): item is WireTargetFactor {
-    return reflection.isInstance(item, WireTargetFactor);
-}
-
-export type WireTargetPrimary = ForeignInstancePortExpression | NumericLiteral | ParenthesesWireTargetExpression | SelfInstancePortExpression | StringLiteral;
-
-export const WireTargetPrimary = 'WireTargetPrimary';
-
-export function isWireTargetPrimary(item: unknown): item is WireTargetPrimary {
-    return reflection.isInstance(item, WireTargetPrimary);
-}
-
 export interface BinaryWireTargetExpression extends AstNode {
-    readonly $container: BinaryWireTargetExpression | ParenthesesWireTargetExpression | PatternMatching | WireDefinition;
+    readonly $container: BinaryWireTargetExpression | ConstructorApplication | ParenthesesWireTargetExpression | PatternMatchDefinition | PatternMatching | WireDefinition;
     readonly $type: 'BinaryWireTargetExpression';
-    left: WireTargetAddition | WireTargetFactor | WireTargetPrimary
+    left: Addition | Factor | Primary
     op: '!=' | '*' | '+' | '-' | '/' | '<' | '<=' | '==' | '>' | '>=' | 'div' | 'mod'
-    right: WireTargetAddition | WireTargetFactor | WireTargetPrimary
+    right: Addition | Factor | Primary
 }
 
 export const BinaryWireTargetExpression = 'BinaryWireTargetExpression';
 
 export function isBinaryWireTargetExpression(item: unknown): item is BinaryWireTargetExpression {
     return reflection.isInstance(item, BinaryWireTargetExpression);
+}
+
+export interface BooleanConstructor extends AstNode {
+    readonly $container: PortDefinition;
+    readonly $type: 'BooleanConstructor';
+}
+
+export const BooleanConstructor = 'BooleanConstructor';
+
+export function isBooleanConstructor(item: unknown): item is BooleanConstructor {
+    return reflection.isInstance(item, BooleanConstructor);
+}
+
+export interface ConstructorApplication extends AstNode {
+    readonly $container: BinaryWireTargetExpression | ConstructorApplication | ParenthesesWireTargetExpression | PatternMatchDefinition | PatternMatching | WireDefinition;
+    readonly $type: 'ConstructorApplication';
+    arguments: Array<Primary>
+    constructor: Reference<DataTypeConstructorDefinition>
+}
+
+export const ConstructorApplication = 'ConstructorApplication';
+
+export function isConstructorApplication(item: unknown): item is ConstructorApplication {
+    return reflection.isInstance(item, ConstructorApplication);
 }
 
 export interface DataTypeConstructorDefinition extends AstNode {
@@ -104,8 +142,19 @@ export function isFile(item: unknown): item is File {
     return reflection.isInstance(item, File);
 }
 
+export interface FloatConstructor extends AstNode {
+    readonly $container: PortDefinition;
+    readonly $type: 'FloatConstructor';
+}
+
+export const FloatConstructor = 'FloatConstructor';
+
+export function isFloatConstructor(item: unknown): item is FloatConstructor {
+    return reflection.isInstance(item, FloatConstructor);
+}
+
 export interface ForeignInstancePortExpression extends AstNode {
-    readonly $container: BinaryWireTargetExpression | ParenthesesWireTargetExpression | PatternMatching | WireDefinition;
+    readonly $container: BinaryWireTargetExpression | ConstructorApplication | ParenthesesWireTargetExpression | PatternMatchDefinition | PatternMatching | WireDefinition;
     readonly $type: 'ForeignInstancePortExpression';
     instanceRef: Reference<ModuleInstance>
     portRef: Reference<PortDefinition>
@@ -134,10 +183,12 @@ export function isImplementationBody(item: unknown): item is ImplementationBody 
 export interface ImplementationDefinition extends AstNode {
     readonly $container: File;
     readonly $type: 'ImplementationDefinition';
+    arguments: Array<TypeExpression>
     body: ImplementationBody
     iface?: Reference<InterfaceDefinition>
     name: string
     ports: Array<PortDefinition>
+    typeParameters: Array<TypeParameter>
 }
 
 export const ImplementationDefinition = 'ImplementationDefinition';
@@ -146,17 +197,53 @@ export function isImplementationDefinition(item: unknown): item is Implementatio
     return reflection.isInstance(item, ImplementationDefinition);
 }
 
+export interface IntegerConstructor extends AstNode {
+    readonly $container: PortDefinition;
+    readonly $type: 'IntegerConstructor';
+}
+
+export const IntegerConstructor = 'IntegerConstructor';
+
+export function isIntegerConstructor(item: unknown): item is IntegerConstructor {
+    return reflection.isInstance(item, IntegerConstructor);
+}
+
 export interface InterfaceDefinition extends AstNode {
     readonly $container: File;
     readonly $type: 'InterfaceDefinition';
     name: string
     ports: Array<PortDefinition>
+    typeParameters: Array<TypeParameter>
 }
 
 export const InterfaceDefinition = 'InterfaceDefinition';
 
 export function isInterfaceDefinition(item: unknown): item is InterfaceDefinition {
     return reflection.isInstance(item, InterfaceDefinition);
+}
+
+export interface MatchVariableDefinition extends AstNode {
+    readonly $container: BinaryWireTargetExpression | ConstructorApplication | ParenthesesWireTargetExpression | PatternMatchDefinition | PatternMatching | WireDefinition;
+    readonly $type: 'MatchVariableDefinition';
+    name: string
+}
+
+export const MatchVariableDefinition = 'MatchVariableDefinition';
+
+export function isMatchVariableDefinition(item: unknown): item is MatchVariableDefinition {
+    return reflection.isInstance(item, MatchVariableDefinition);
+}
+
+export interface MatchVariableUsage extends AstNode {
+    readonly $container: BinaryWireTargetExpression | ConstructorApplication | ParenthesesWireTargetExpression | PatternMatchDefinition | PatternMatching | WireDefinition;
+    readonly $type: 'MatchVariableUsage';
+    variable: Reference<MatchVariableDefinition>
+}
+
+export const MatchVariableUsage = 'MatchVariableUsage';
+
+export function isMatchVariableUsage(item: unknown): item is MatchVariableUsage {
+    return reflection.isInstance(item, MatchVariableUsage);
 }
 
 export interface ModuleInstance extends AstNode {
@@ -173,7 +260,7 @@ export function isModuleInstance(item: unknown): item is ModuleInstance {
 }
 
 export interface NumericLiteral extends AstNode {
-    readonly $container: BinaryWireTargetExpression | ParenthesesWireTargetExpression | PatternMatching | WireDefinition;
+    readonly $container: BinaryWireTargetExpression | ConstructorApplication | ParenthesesWireTargetExpression | PatternMatchDefinition | PatternMatching | WireDefinition;
     readonly $type: 'NumericLiteral';
     number: string
 }
@@ -185,7 +272,7 @@ export function isNumericLiteral(item: unknown): item is NumericLiteral {
 }
 
 export interface ParenthesesTypeExpression extends AstNode {
-    readonly $container: DataTypeConstructorDefinition | ParenthesesTypeExpression | TypeApplication;
+    readonly $container: DataTypeConstructorDefinition | ImplementationDefinition | ParenthesesTypeExpression | TypeApplication | TypeConstructor;
     readonly $type: 'ParenthesesTypeExpression';
     type: TypeExpression
 }
@@ -197,9 +284,9 @@ export function isParenthesesTypeExpression(item: unknown): item is ParenthesesT
 }
 
 export interface ParenthesesWireTargetExpression extends AstNode {
-    readonly $container: BinaryWireTargetExpression | ParenthesesWireTargetExpression | PatternMatching | WireDefinition;
+    readonly $container: BinaryWireTargetExpression | ConstructorApplication | ParenthesesWireTargetExpression | PatternMatchDefinition | PatternMatching | WireDefinition;
     readonly $type: 'ParenthesesWireTargetExpression';
-    expression: WireTargetExpression
+    expression: Expression
 }
 
 export const ParenthesesWireTargetExpression = 'ParenthesesWireTargetExpression';
@@ -208,24 +295,11 @@ export function isParenthesesWireTargetExpression(item: unknown): item is Parent
     return reflection.isInstance(item, ParenthesesWireTargetExpression);
 }
 
-export interface Pattern extends AstNode {
-    readonly $container: PatternMatchDefinition;
-    readonly $type: 'Pattern';
-    name: string
-    type: DataType
-}
-
-export const Pattern = 'Pattern';
-
-export function isPattern(item: unknown): item is Pattern {
-    return reflection.isInstance(item, Pattern);
-}
-
 export interface PatternMatchDefinition extends AstNode {
     readonly $container: PatternMatching;
     readonly $type: 'PatternMatchDefinition';
     body: ImplementationBody
-    pattern: Pattern
+    pattern: Expression
 }
 
 export const PatternMatchDefinition = 'PatternMatchDefinition';
@@ -238,7 +312,7 @@ export interface PatternMatching extends AstNode {
     readonly $container: ImplementationBody;
     readonly $type: 'PatternMatching';
     matches: Array<PatternMatchDefinition>
-    source: WireTargetExpression
+    source: Expression
 }
 
 export const PatternMatching = 'PatternMatching';
@@ -262,7 +336,7 @@ export function isPortDefinition(item: unknown): item is PortDefinition {
 }
 
 export interface SelfInstancePortExpression extends AstNode {
-    readonly $container: BinaryWireTargetExpression | ParenthesesWireTargetExpression | PatternMatching | WireDefinition;
+    readonly $container: BinaryWireTargetExpression | ConstructorApplication | ParenthesesWireTargetExpression | PatternMatchDefinition | PatternMatching | WireDefinition;
     readonly $type: 'SelfInstancePortExpression';
     portRef: Reference<PortDefinition>
 }
@@ -273,8 +347,19 @@ export function isSelfInstancePortExpression(item: unknown): item is SelfInstanc
     return reflection.isInstance(item, SelfInstancePortExpression);
 }
 
+export interface StringConstructor extends AstNode {
+    readonly $container: PortDefinition;
+    readonly $type: 'StringConstructor';
+}
+
+export const StringConstructor = 'StringConstructor';
+
+export function isStringConstructor(item: unknown): item is StringConstructor {
+    return reflection.isInstance(item, StringConstructor);
+}
+
 export interface StringLiteral extends AstNode {
-    readonly $container: BinaryWireTargetExpression | ParenthesesWireTargetExpression | PatternMatching | WireDefinition;
+    readonly $container: BinaryWireTargetExpression | ConstructorApplication | ParenthesesWireTargetExpression | PatternMatchDefinition | PatternMatching | WireDefinition;
     readonly $type: 'StringLiteral';
     string: string
 }
@@ -286,9 +371,9 @@ export function isStringLiteral(item: unknown): item is StringLiteral {
 }
 
 export interface TypeApplication extends AstNode {
-    readonly $container: DataTypeConstructorDefinition | ParenthesesTypeExpression | TypeApplication;
+    readonly $container: DataTypeConstructorDefinition | ImplementationDefinition | ParenthesesTypeExpression | TypeApplication | TypeConstructor;
     readonly $type: 'TypeApplication';
-    dataType: Reference<DataTypeDefinition>
+    dataType: Reference<SignatureType>
     typeParameters: Array<TypeExpression>
 }
 
@@ -298,8 +383,20 @@ export function isTypeApplication(item: unknown): item is TypeApplication {
     return reflection.isInstance(item, TypeApplication);
 }
 
+export interface TypeConstructor extends AstNode {
+    readonly $container: PortDefinition;
+    readonly $type: 'TypeConstructor';
+    expr: TypeExpression
+}
+
+export const TypeConstructor = 'TypeConstructor';
+
+export function isTypeConstructor(item: unknown): item is TypeConstructor {
+    return reflection.isInstance(item, TypeConstructor);
+}
+
 export interface TypeParameter extends AstNode {
-    readonly $container: DataTypeDefinition;
+    readonly $container: DataTypeDefinition | ImplementationDefinition | InterfaceDefinition;
     readonly $type: 'TypeParameter';
     name: string
 }
@@ -311,7 +408,7 @@ export function isTypeParameter(item: unknown): item is TypeParameter {
 }
 
 export interface TypeParameterReference extends AstNode {
-    readonly $container: DataTypeConstructorDefinition | ParenthesesTypeExpression | TypeApplication;
+    readonly $container: DataTypeConstructorDefinition | ImplementationDefinition | ParenthesesTypeExpression | TypeApplication | TypeConstructor;
     readonly $type: 'TypeParameterReference';
     typeParameter: Reference<TypeParameter>
 }
@@ -325,8 +422,8 @@ export function isTypeParameterReference(item: unknown): item is TypeParameterRe
 export interface WireDefinition extends AstNode {
     readonly $container: ImplementationBody;
     readonly $type: 'WireDefinition';
-    source: WireTargetExpression
-    target: WireTargetExpression
+    source: Expression
+    target: Expression
 }
 
 export const WireDefinition = 'WireDefinition';
@@ -336,66 +433,90 @@ export function isWireDefinition(item: unknown): item is WireDefinition {
 }
 
 export interface BifrostAstType {
+    Addition: Addition
     BinaryWireTargetExpression: BinaryWireTargetExpression
+    BooleanConstructor: BooleanConstructor
+    ConstructorApplication: ConstructorApplication
+    DataType: DataType
     DataTypeConstructorDefinition: DataTypeConstructorDefinition
     DataTypeDefinition: DataTypeDefinition
+    Expression: Expression
+    Factor: Factor
     File: File
+    FloatConstructor: FloatConstructor
     ForeignInstancePortExpression: ForeignInstancePortExpression
     ImplementationBody: ImplementationBody
     ImplementationDefinition: ImplementationDefinition
+    IntegerConstructor: IntegerConstructor
     InterfaceDefinition: InterfaceDefinition
+    MatchVariableDefinition: MatchVariableDefinition
+    MatchVariableUsage: MatchVariableUsage
     ModuleInstance: ModuleInstance
     NumericLiteral: NumericLiteral
     ParenthesesTypeExpression: ParenthesesTypeExpression
     ParenthesesWireTargetExpression: ParenthesesWireTargetExpression
-    Pattern: Pattern
     PatternMatchDefinition: PatternMatchDefinition
     PatternMatching: PatternMatching
     PortDefinition: PortDefinition
+    Primary: Primary
     SelfInstancePortExpression: SelfInstancePortExpression
+    SignatureType: SignatureType
+    StringConstructor: StringConstructor
     StringLiteral: StringLiteral
     TypeApplication: TypeApplication
+    TypeConstructor: TypeConstructor
     TypeExpression: TypeExpression
     TypeParameter: TypeParameter
     TypeParameterReference: TypeParameterReference
     WireDefinition: WireDefinition
-    WireTargetAddition: WireTargetAddition
-    WireTargetExpression: WireTargetExpression
-    WireTargetFactor: WireTargetFactor
-    WireTargetPrimary: WireTargetPrimary
 }
 
 export class BifrostAstReflection extends AbstractAstReflection {
 
     getAllTypes(): string[] {
-        return ['BinaryWireTargetExpression', 'DataTypeConstructorDefinition', 'DataTypeDefinition', 'File', 'ForeignInstancePortExpression', 'ImplementationBody', 'ImplementationDefinition', 'InterfaceDefinition', 'ModuleInstance', 'NumericLiteral', 'ParenthesesTypeExpression', 'ParenthesesWireTargetExpression', 'Pattern', 'PatternMatchDefinition', 'PatternMatching', 'PortDefinition', 'SelfInstancePortExpression', 'StringLiteral', 'TypeApplication', 'TypeExpression', 'TypeParameter', 'TypeParameterReference', 'WireDefinition', 'WireTargetAddition', 'WireTargetExpression', 'WireTargetFactor', 'WireTargetPrimary'];
+        return ['Addition', 'BinaryWireTargetExpression', 'BooleanConstructor', 'ConstructorApplication', 'DataType', 'DataTypeConstructorDefinition', 'DataTypeDefinition', 'Expression', 'Factor', 'File', 'FloatConstructor', 'ForeignInstancePortExpression', 'ImplementationBody', 'ImplementationDefinition', 'IntegerConstructor', 'InterfaceDefinition', 'MatchVariableDefinition', 'MatchVariableUsage', 'ModuleInstance', 'NumericLiteral', 'ParenthesesTypeExpression', 'ParenthesesWireTargetExpression', 'PatternMatchDefinition', 'PatternMatching', 'PortDefinition', 'Primary', 'SelfInstancePortExpression', 'SignatureType', 'StringConstructor', 'StringLiteral', 'TypeApplication', 'TypeConstructor', 'TypeExpression', 'TypeParameter', 'TypeParameterReference', 'WireDefinition'];
     }
 
     protected override computeIsSubtype(subtype: string, supertype: string): boolean {
         switch (subtype) {
-            case BinaryWireTargetExpression: {
-                return this.isSubtype(WireTargetAddition, supertype) || this.isSubtype(WireTargetExpression, supertype) || this.isSubtype(WireTargetFactor, supertype);
+            case Addition: {
+                return this.isSubtype(Expression, supertype);
             }
+            case BinaryWireTargetExpression: {
+                return this.isSubtype(Addition, supertype) || this.isSubtype(Expression, supertype) || this.isSubtype(Factor, supertype);
+            }
+            case BooleanConstructor:
+            case FloatConstructor:
+            case IntegerConstructor:
+            case StringConstructor:
+            case TypeConstructor: {
+                return this.isSubtype(DataType, supertype);
+            }
+            case ConstructorApplication:
             case ForeignInstancePortExpression:
+            case MatchVariableDefinition:
+            case MatchVariableUsage:
             case NumericLiteral:
             case ParenthesesWireTargetExpression:
             case SelfInstancePortExpression:
             case StringLiteral: {
-                return this.isSubtype(WireTargetPrimary, supertype);
+                return this.isSubtype(Primary, supertype);
+            }
+            case DataTypeDefinition:
+            case ImplementationDefinition:
+            case InterfaceDefinition: {
+                return this.isSubtype(SignatureType, supertype);
+            }
+            case Factor: {
+                return this.isSubtype(Addition, supertype);
             }
             case ParenthesesTypeExpression:
             case TypeApplication:
             case TypeParameterReference: {
                 return this.isSubtype(TypeExpression, supertype);
             }
-            case WireTargetAddition: {
-                return this.isSubtype(WireTargetExpression, supertype);
-            }
-            case WireTargetFactor: {
-                return this.isSubtype(WireTargetAddition, supertype);
-            }
-            case WireTargetPrimary: {
-                return this.isSubtype(WireTargetFactor, supertype);
+            case Primary: {
+                return this.isSubtype(Factor, supertype);
             }
             default: {
                 return false;
@@ -406,6 +527,9 @@ export class BifrostAstReflection extends AbstractAstReflection {
     getReferenceType(refInfo: ReferenceInfo): string {
         const referenceId = `${refInfo.container.$type}:${refInfo.property}`;
         switch (referenceId) {
+            case 'ConstructorApplication:constructor': {
+                return DataTypeConstructorDefinition;
+            }
             case 'ForeignInstancePortExpression:instanceRef': {
                 return ModuleInstance;
             }
@@ -416,11 +540,14 @@ export class BifrostAstReflection extends AbstractAstReflection {
             case 'ImplementationDefinition:iface': {
                 return InterfaceDefinition;
             }
+            case 'MatchVariableUsage:variable': {
+                return MatchVariableDefinition;
+            }
             case 'ModuleInstance:module': {
                 return ImplementationDefinition;
             }
             case 'TypeApplication:dataType': {
-                return DataTypeDefinition;
+                return SignatureType;
             }
             case 'TypeParameterReference:typeParameter': {
                 return TypeParameter;
@@ -433,6 +560,14 @@ export class BifrostAstReflection extends AbstractAstReflection {
 
     getTypeMetaData(type: string): TypeMetaData {
         switch (type) {
+            case 'ConstructorApplication': {
+                return {
+                    name: 'ConstructorApplication',
+                    mandatory: [
+                        { name: 'arguments', type: 'array' }
+                    ]
+                };
+            }
             case 'DataTypeConstructorDefinition': {
                 return {
                     name: 'DataTypeConstructorDefinition',
@@ -474,7 +609,9 @@ export class BifrostAstReflection extends AbstractAstReflection {
                 return {
                     name: 'ImplementationDefinition',
                     mandatory: [
-                        { name: 'ports', type: 'array' }
+                        { name: 'arguments', type: 'array' },
+                        { name: 'ports', type: 'array' },
+                        { name: 'typeParameters', type: 'array' }
                     ]
                 };
             }
@@ -482,7 +619,8 @@ export class BifrostAstReflection extends AbstractAstReflection {
                 return {
                     name: 'InterfaceDefinition',
                     mandatory: [
-                        { name: 'ports', type: 'array' }
+                        { name: 'ports', type: 'array' },
+                        { name: 'typeParameters', type: 'array' }
                     ]
                 };
             }

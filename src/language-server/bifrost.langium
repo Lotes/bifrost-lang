@@ -8,6 +8,8 @@ entry File:
     )*
     ;
 
+type SignatureType = DataTypeDefinition | InterfaceDefinition | ImplementationDefinition;
+
 DataTypeDefinition:
     'datatype' name=UPPER_ID typeParameters+=TypeParameter* '{'
         constructors+=DataTypeConstructorDefinition (',' constructors+=DataTypeConstructorDefinition)*
@@ -22,19 +24,19 @@ DataTypeConstructorDefinition:
 
 TypeExpression:
     {infer TypeParameterReference} typeParameter=[TypeParameter]
-    | {infer TypeApplication} dataType=[DataTypeDefinition] typeParameters+=TypeExpression*
+    | {infer TypeApplication} dataType=[SignatureType] typeParameters+=TypeExpression*
     | {infer ParenthesesTypeExpression} '(' type=TypeExpression ')'
     ;
     
 InterfaceDefinition:
-    'interface' name=UPPER_ID '{'
+    'interface' name=UPPER_ID typeParameters+=TypeParameter* '{'
         (ports+=PortDefinition ';')*
     '}'
     ;
 
 
 ImplementationDefinition:
-    'implementation' name=UPPER_ID ('of' iface=[InterfaceDefinition])? '{' 
+    'implementation' name=UPPER_ID typeParameters+=TypeParameter* ('of' iface=[InterfaceDefinition] arguments+=TypeExpression*)? '{' 
         (ports+=PortDefinition ';')*
         body=ImplementationBody
     '}'
@@ -49,49 +51,56 @@ ImplementationBody:
     ;
 
 PatternMatching:
-    'match' source=WireTargetExpression 'with' '{' 
+    'match' source=Expression 'with' '{' 
         (matches+=PatternMatchDefinition)*
     '}'
     ;
 
 PatternMatchDefinition:
-    'case' pattern=Pattern '{'
+    'case' pattern=Expression '{'
         body=ImplementationBody
     '}';
 
-Pattern: name=UPPER_ID ':' type=DataType;
+WireDefinition: 'wire' source=Expression 'to' target=Expression;
 
-WireDefinition: 'wire' source=WireTargetExpression 'to' target=WireTargetExpression;
-
-WireTargetExpression:
-    WireTargetAddition
-    ({infer BinaryWireTargetExpression.left=current} op=('=='|'!='|'<'|'>'|'<='|'>=') right=WireTargetAddition)*
+Expression:
+    Addition
+    ({infer BinaryWireTargetExpression.left=current} op=('=='|'!='|'<'|'>'|'<='|'>=') right=Addition)*
     ;
-WireTargetAddition:
-    WireTargetFactor 
-    ({infer BinaryWireTargetExpression.left=current} op=('+'|'-') right=WireTargetFactor)*
+Addition:
+    Factor 
+    ({infer BinaryWireTargetExpression.left=current} op=('+'|'-') right=Factor)*
     ;
 
-WireTargetFactor:
-    WireTargetPrimary 
-    ({infer BinaryWireTargetExpression.left=current} op=('*'|'/'|'mod'|'div') right=WireTargetPrimary)*
+Factor:
+    Primary 
+    ({infer BinaryWireTargetExpression.left=current} op=('*'|'/'|'mod'|'div') right=Primary)*
     ;
 
-WireTargetPrimary:    
+Primary:    
      {infer SelfInstancePortExpression} 'this' '.' portRef=[PortDefinition:LOWER_ID]
      | {infer ForeignInstancePortExpression} instanceRef=[ModuleInstance] '.' portRef=[PortDefinition:LOWER_ID]
      | {infer NumericLiteral} number=INT
      | {infer StringLiteral} string=STRING
-     | {infer ParenthesesWireTargetExpression} '(' expression=WireTargetExpression ')'
+     | {infer ParenthesesWireTargetExpression} '(' expression=Expression ')'
+     | {infer ConstructorApplication} constructor=[DataTypeConstructorDefinition] arguments+=Primary*
+     | {infer MatchVariableDefinition} name=LOWER_ID '?'
+     | {infer MatchVariableUsage} variable=[MatchVariableDefinition:LOWER_ID]
      ;
 
 ModuleInstance:
     'instance' name=LOWER_ID 'of' module=[ImplementationDefinition]
     ;
 
-PortDefinition: direction=Direction name=LOWER_ID ':' type=DataType;
+PortDefinition: direction=Direction name=LOWER_ID 'of' type=DataType;
 
-DataType returns string: 'int';
+DataType:
+    {infer TypeConstructor} expr=TypeExpression
+    | {infer IntegerConstructor} 'Integer'
+    | {infer FloatConstructor} 'Float'
+    | {infer StringConstructor} 'String'
+    | {infer BooleanConstructor} 'Boolean'
+    ;
 
 Direction returns string: 'in' | 'out';
 

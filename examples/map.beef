@@ -1,0 +1,26 @@
+datatype List a {
+  Nil,
+  Cons a (List a)
+}
+
+interface MapFunction a b {
+  in input of a;
+  out result of b;
+}
+
+implementation Map a b {
+  in input of List a;
+  in function of MapFunction a b;
+  out result of List b;
+  match this.input with {
+    case Nil {
+      wire Nil to this.result;
+    }
+    case Cons x xs {
+      instance mapRest of Map a b;
+      wire xs to mapRest.input;
+      wire this.function to mapRest.function;
+      wire Cons (this.function x) (mapRest.result) to this.result;
+    }
+  }
+}
