@@ -20,12 +20,24 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ||(loadedBifro
         "elements": [
           {
             "$type": "Assignment",
-            "feature": "modules",
+            "feature": "interfaces",
             "operator": "+=",
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$refText": "ModuleDefinition"
+                "$refText": "InterfaceDefinition"
+              },
+              "arguments": []
+            }
+          },
+          {
+            "$type": "Assignment",
+            "feature": "implementations",
+            "operator": "+=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$refText": "ImplementationDefinition"
               },
               "arguments": []
             }
@@ -309,13 +321,13 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ||(loadedBifro
     },
     {
       "$type": "ParserRule",
-      "name": "ModuleDefinition",
+      "name": "InterfaceDefinition",
       "alternatives": {
         "$type": "Group",
         "elements": [
           {
             "$type": "Keyword",
-            "value": "module"
+            "value": "interface"
           },
           {
             "$type": "Assignment",
@@ -334,33 +346,109 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ||(loadedBifro
             "value": "{"
           },
           {
-            "$type": "Keyword",
-            "value": "interface"
-          },
-          {
-            "$type": "Keyword",
-            "value": ":"
-          },
-          {
-            "$type": "Assignment",
-            "feature": "ports",
-            "operator": "+=",
-            "terminal": {
-              "$type": "RuleCall",
-              "rule": {
-                "$refText": "PortDefinition"
+            "$type": "Group",
+            "elements": [
+              {
+                "$type": "Assignment",
+                "feature": "ports",
+                "operator": "+=",
+                "terminal": {
+                  "$type": "RuleCall",
+                  "rule": {
+                    "$refText": "PortDefinition"
+                  },
+                  "arguments": []
+                }
               },
-              "arguments": []
-            },
+              {
+                "$type": "Keyword",
+                "value": ";"
+              }
+            ],
             "cardinality": "*"
           },
+          {
+            "$type": "Keyword",
+            "value": "}"
+          }
+        ]
+      },
+      "definesHiddenTokens": false,
+      "entry": false,
+      "fragment": false,
+      "hiddenTokens": [],
+      "parameters": [],
+      "wildcard": false
+    },
+    {
+      "$type": "ParserRule",
+      "name": "ImplementationDefinition",
+      "alternatives": {
+        "$type": "Group",
+        "elements": [
           {
             "$type": "Keyword",
             "value": "implementation"
           },
           {
+            "$type": "Assignment",
+            "feature": "name",
+            "operator": "=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$refText": "UPPER_ID"
+              },
+              "arguments": []
+            }
+          },
+          {
+            "$type": "Group",
+            "elements": [
+              {
+                "$type": "Keyword",
+                "value": "of"
+              },
+              {
+                "$type": "Assignment",
+                "feature": "iface",
+                "operator": "=",
+                "terminal": {
+                  "$type": "CrossReference",
+                  "type": {
+                    "$refText": "InterfaceDefinition"
+                  },
+                  "deprecatedSyntax": false
+                }
+              }
+            ],
+            "cardinality": "?"
+          },
+          {
             "$type": "Keyword",
-            "value": ":"
+            "value": "{"
+          },
+          {
+            "$type": "Group",
+            "elements": [
+              {
+                "$type": "Assignment",
+                "feature": "ports",
+                "operator": "+=",
+                "terminal": {
+                  "$type": "RuleCall",
+                  "rule": {
+                    "$refText": "PortDefinition"
+                  },
+                  "arguments": []
+                }
+              },
+              {
+                "$type": "Keyword",
+                "value": ";"
+              }
+            ],
+            "cardinality": "*"
           },
           {
             "$type": "Assignment",
@@ -915,7 +1003,7 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ||(loadedBifro
                   "terminal": {
                     "$type": "RuleCall",
                     "rule": {
-                      "$refText": "UPPER_ID"
+                      "$refText": "LOWER_ID"
                     },
                     "arguments": []
                   },
@@ -962,7 +1050,7 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ||(loadedBifro
                   "terminal": {
                     "$type": "RuleCall",
                     "rule": {
-                      "$refText": "UPPER_ID"
+                      "$refText": "LOWER_ID"
                     },
                     "arguments": []
                   },
@@ -1077,7 +1165,7 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ||(loadedBifro
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$refText": "UPPER_ID"
+                "$refText": "LOWER_ID"
               },
               "arguments": []
             }
@@ -1093,7 +1181,7 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ||(loadedBifro
             "terminal": {
               "$type": "CrossReference",
               "type": {
-                "$refText": "ModuleDefinition"
+                "$refText": "ImplementationDefinition"
               },
               "deprecatedSyntax": false
             }
@@ -1132,7 +1220,7 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ||(loadedBifro
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$refText": "UPPER_ID"
+                "$refText": "LOWER_ID"
               },
               "arguments": []
             }

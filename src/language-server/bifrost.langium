@@ -1,7 +1,11 @@
 grammar Bifrost
 
 entry File: 
-    (modules+=ModuleDefinition|dataTypeDefinitions=DataTypeDefinition)*
+    (
+        interfaces+=InterfaceDefinition
+        | implementations+=ImplementationDefinition
+        | dataTypeDefinitions=DataTypeDefinition
+    )*
     ;
 
 DataTypeDefinition:
@@ -22,11 +26,17 @@ TypeExpression:
     | {infer ParenthesesTypeExpression} '(' type=TypeExpression ')'
     ;
     
+InterfaceDefinition:
+    'interface' name=UPPER_ID '{'
+        (ports+=PortDefinition ';')*
+    '}'
+    ;
 
-ModuleDefinition:
-    'module' name=UPPER_ID '{' 
-        'interface' ':' ports+=PortDefinition*
-        'implementation' ':' body=ImplementationBody
+
+ImplementationDefinition:
+    'implementation' name=UPPER_ID ('of' iface=[InterfaceDefinition])? '{' 
+        (ports+=PortDefinition ';')*
+        body=ImplementationBody
     '}'
     ;
 
@@ -64,18 +74,18 @@ WireTargetFactor:
     ;
 
 WireTargetPrimary:    
-     {infer SelfInstancePortExpression} 'this' '.' portRef=[PortDefinition:UPPER_ID]
-     | {infer ForeignInstancePortExpression} instanceRef=[ModuleInstance] '.' portRef=[PortDefinition:UPPER_ID]
+     {infer SelfInstancePortExpression} 'this' '.' portRef=[PortDefinition:LOWER_ID]
+     | {infer ForeignInstancePortExpression} instanceRef=[ModuleInstance] '.' portRef=[PortDefinition:LOWER_ID]
      | {infer NumericLiteral} number=INT
      | {infer StringLiteral} string=STRING
      | {infer ParenthesesWireTargetExpression} '(' expression=WireTargetExpression ')'
      ;
 
 ModuleInstance:
-    'instance' name=UPPER_ID 'of' module=[ModuleDefinition]
+    'instance' name=LOWER_ID 'of' module=[ImplementationDefinition]
     ;
 
-PortDefinition: direction=Direction name=UPPER_ID ':' type=DataType;
+PortDefinition: direction=Direction name=LOWER_ID ':' type=DataType;
 
 DataType returns string: 'int';
 

@@ -10,7 +10,7 @@
     },
     {
       "name": "keyword.control.bifrost",
-      "match": "\\b(case|datatype|div|implementation|in|instance|int|interface|match|mod|module|of|out|this|to|wire|with)\\b"
+      "match": "\\b(case|datatype|div|implementation|in|instance|int|interface|match|mod|of|out|this|to|wire|with)\\b"
     },
     {
       "name": "string.quoted.double.bifrost",
