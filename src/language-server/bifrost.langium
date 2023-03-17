@@ -4,7 +4,7 @@ entry File:
     (
         interfaces+=InterfaceDefinition
         | implementations+=ImplementationDefinition
-        | dataTypeDefinitions=DataTypeDefinition
+        | dataTypeDefinitions+=DataTypeDefinition
     )*
     ;
 
@@ -41,7 +41,11 @@ ImplementationDefinition:
     ;
 
 ImplementationBody:
-    (modules+=ModuleInstance ';'|links+=WireDefinition ';'|matches+=PatternMatching)*
+    (
+        modules+=ModuleInstance ';'
+        | links+=WireDefinition ';'
+        | matches+=PatternMatching
+    )*
     ;
 
 PatternMatching:

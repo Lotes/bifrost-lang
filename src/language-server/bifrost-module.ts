@@ -27,6 +27,9 @@ export type BifrostServices = LangiumServices & BifrostAddedServices
 export const BifrostModule: Module<BifrostServices, PartialLangiumServices & BifrostAddedServices> = {
     validation: {
         ValidationRegistry: (services) => new BifrostValidationRegistry(services),
+    },
+    references: {
+        ScopeProvider: (services) => new BifrostScopeProvider(services)
     }
 };
 

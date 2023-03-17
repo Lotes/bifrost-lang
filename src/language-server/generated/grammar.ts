@@ -45,7 +45,7 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ||(loadedBifro
           {
             "$type": "Assignment",
             "feature": "dataTypeDefinitions",
-            "operator": "=",
+            "operator": "+=",
             "terminal": {
               "$type": "RuleCall",
               "rule": {

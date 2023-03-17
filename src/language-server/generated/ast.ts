@@ -90,7 +90,7 @@ export function isDataTypeDefinition(item: unknown): item is DataTypeDefinition 
 }
 
 export interface File extends AstNode {
-    dataTypeDefinitions?: DataTypeDefinition
+    dataTypeDefinitions: Array<DataTypeDefinition>
     implementations: Array<ImplementationDefinition>
     interfaces: Array<InterfaceDefinition>
 }
@@ -404,6 +404,7 @@ export class BifrostAstReflection implements AstReflection {
                 return {
                     name: 'File',
                     mandatory: [
+                        { name: 'dataTypeDefinitions', type: 'array' },
                         { name: 'implementations', type: 'array' },
                         { name: 'interfaces', type: 'array' }
                     ]
