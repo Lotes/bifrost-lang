@@ -1,6 +1,6 @@
-datatype List a {
+datatype List<a> {
   Nil,
-  Cons a (List a)
+  Cons a List<a>
 }
 
 abstract node MapFunction<a, b>(
@@ -9,16 +9,16 @@ abstract node MapFunction<a, b>(
 ) {}
 
 node Map<a, b>(
-  in input of List a,
-  in function of MapFunction a b,
-  out result of List b
+  in input of List<a>,
+  in function of MapFunction<a, b>,
+  out result of List<b>
 ) {
   match this.input with {
     case Nil {
       wire Nil to this.result;
     }
     case Cons x? xs? {
-      instance mapRest of Map a b;
+      instance mapRest of Map<a, b>;
       instance call of this.function;
       wire x to this.call.input;
       wire xs to this.mapRest.input;
