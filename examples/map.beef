@@ -3,24 +3,27 @@ datatype List a {
   Cons a (List a)
 }
 
-interface MapFunction a b {
-  in input of a;
-  out result of b;
-}
+abstract node MapFunction<a, b>(
+  in input of a,
+  out result of b
+) {}
 
-implementation Map a b {
-  in input of List a;
-  in function of MapFunction a b;
-  out result of List b;
+node Map<a, b>(
+  in input of List a,
+  in function of MapFunction a b,
+  out result of List b
+) {
   match this.input with {
     case Nil {
       wire Nil to this.result;
     }
-    case Cons x xs {
+    case Cons x? xs? {
       instance mapRest of Map a b;
-      wire xs to mapRest.input;
-      wire this.function to mapRest.function;
-      wire Cons (this.function x) (mapRest.result) to this.result;
+      instance call of this.function;
+      wire x to this.call.input;
+      wire xs to this.mapRest.input;
+      wire this.function to this.mapRest.function;
+      wire Cons (this.call.result) (this.mapRest.result) to this.result;
     }
   }
 }
