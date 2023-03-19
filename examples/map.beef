@@ -3,12 +3,12 @@ datatype List<a> {
   Cons a List<a>
 }
 
-abstract node MapFunction<a, b>(
+abstract nodetype MapFunction<a, b>(
   in input of a,
   out result of b
 ) {}
 
-node Map<a, b>(
+nodetype Map<a, b>(
   in input of List<a>,
   in function of MapFunction<a, b>,
   out result of List<b>
@@ -18,8 +18,8 @@ node Map<a, b>(
       link Nil to this.result;
     }
     case Cons x? xs? {
-      instance mapRest of Map<a, b>;
-      instance call of this.function;
+      node mapRest of Map<a, b>;
+      node call of this.function;
       link x to this.call.input;
       link xs to this.mapRest.input;
       link this.function to this.mapRest.function;

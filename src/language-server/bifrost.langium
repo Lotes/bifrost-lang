@@ -11,6 +11,7 @@ type SignatureType = DataTypeDefinition | NodeTypeDefinition;
 
 fragment TypeParametersClause: '<' typeParameters+=TypeParameter (',' typeParameters+=TypeParameter)* '>';
 fragment TypeParameterAssignmentsClause: '<' arguments+=TypeExpression (',' arguments+=TypeExpression)* '>';
+fragment ConstructorParameterAssignmentsClause: arguments+=TypeExpression*;
 
 DataTypeDefinition:
     'datatype' name=UPPER_ID TypeParametersClause? '{'
@@ -19,7 +20,7 @@ DataTypeDefinition:
     ;
 
 DataTypeConstructorDefinition:
-    name=UPPER_ID TypeParametersClause?
+    name=UPPER_ID ConstructorParameterAssignmentsClause?
     ;
 
 NodeTypeDefinition:
@@ -44,6 +45,10 @@ TypeExpression:
     {infer TypeParameterReference} typeParameter=[TypeParameter]
     | {infer TypeApplication} dataType=[SignatureType] TypeParameterAssignmentsClause?
     | {infer ParenthesesTypeExpression} '(' type=TypeExpression ')'
+    | {infer IntegerConstructor} 'Integer'
+    | {infer FloatConstructor} 'Float'
+    | {infer StringConstructor} 'String'
+    | {infer BooleanConstructor} 'Boolean'
     ;
 
 
@@ -95,15 +100,7 @@ InstanceSource:
     | {infer NodePortSource} 'this' '.' instanceRef=[Node] '.' portRef=[PortDefinition:LOWER_ID]
     ;
 
-PortDefinition: direction=Direction name=LOWER_ID 'of' type=DataType;
-
-DataType:
-    {infer TypeConstructor} constructor=[DataTypeConstructorDefinition] TypeParameterAssignmentsClause?
-    | {infer IntegerConstructor} 'Integer'
-    | {infer FloatConstructor} 'Float'
-    | {infer StringConstructor} 'String'
-    | {infer BooleanConstructor} 'Boolean'
-    ;
+PortDefinition: direction=Direction name=LOWER_ID 'of' type=TypeExpression;
 
 Direction returns string: 'in' | 'out';
 

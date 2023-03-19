@@ -14,14 +14,6 @@ export function isAddition(item: unknown): item is Addition {
     return reflection.isInstance(item, Addition);
 }
 
-export type DataType = BooleanConstructor | FloatConstructor | IntegerConstructor | StringConstructor | TypeConstructor;
-
-export const DataType = 'DataType';
-
-export function isDataType(item: unknown): item is DataType {
-    return reflection.isInstance(item, DataType);
-}
-
 export type Direction = 'in' | 'out';
 
 export type Expression = Addition | BinaryWireTargetExpression;
@@ -64,7 +56,7 @@ export function isSignatureType(item: unknown): item is SignatureType {
     return reflection.isInstance(item, SignatureType);
 }
 
-export type TypeExpression = ParenthesesTypeExpression | TypeApplication | TypeParameterReference;
+export type TypeExpression = BooleanConstructor | FloatConstructor | IntegerConstructor | ParenthesesTypeExpression | StringConstructor | TypeApplication | TypeParameterReference;
 
 export const TypeExpression = 'TypeExpression';
 
@@ -87,7 +79,7 @@ export function isBinaryWireTargetExpression(item: unknown): item is BinaryWireT
 }
 
 export interface BooleanConstructor extends AstNode {
-    readonly $container: PortDefinition;
+    readonly $container: DataTypeConstructorDefinition | NodeTypeDefinition | NodeTypeDefinitionSource | ParenthesesTypeExpression | PortDefinition | TypeApplication;
     readonly $type: 'BooleanConstructor';
 }
 
@@ -113,8 +105,8 @@ export function isConstructorApplication(item: unknown): item is ConstructorAppl
 export interface DataTypeConstructorDefinition extends AstNode {
     readonly $container: DataTypeDefinition;
     readonly $type: 'DataTypeConstructorDefinition';
+    arguments: Array<TypeExpression>
     name: string
-    typeParameters: Array<TypeParameter>
 }
 
 export const DataTypeConstructorDefinition = 'DataTypeConstructorDefinition';
@@ -150,7 +142,7 @@ export function isFile(item: unknown): item is File {
 }
 
 export interface FloatConstructor extends AstNode {
-    readonly $container: PortDefinition;
+    readonly $container: DataTypeConstructorDefinition | NodeTypeDefinition | NodeTypeDefinitionSource | ParenthesesTypeExpression | PortDefinition | TypeApplication;
     readonly $type: 'FloatConstructor';
 }
 
@@ -161,7 +153,7 @@ export function isFloatConstructor(item: unknown): item is FloatConstructor {
 }
 
 export interface IntegerConstructor extends AstNode {
-    readonly $container: PortDefinition;
+    readonly $container: DataTypeConstructorDefinition | NodeTypeDefinition | NodeTypeDefinitionSource | ParenthesesTypeExpression | PortDefinition | TypeApplication;
     readonly $type: 'IntegerConstructor';
 }
 
@@ -317,7 +309,7 @@ export function isParenthesesExpression(item: unknown): item is ParenthesesExpre
 }
 
 export interface ParenthesesTypeExpression extends AstNode {
-    readonly $container: NodeTypeDefinition | NodeTypeDefinitionSource | ParenthesesTypeExpression | TypeApplication | TypeConstructor;
+    readonly $container: DataTypeConstructorDefinition | NodeTypeDefinition | NodeTypeDefinitionSource | ParenthesesTypeExpression | PortDefinition | TypeApplication;
     readonly $type: 'ParenthesesTypeExpression';
     type: TypeExpression
 }
@@ -359,7 +351,7 @@ export interface PortDefinition extends AstNode {
     readonly $type: 'PortDefinition';
     direction: Direction
     name: string
-    type: DataType
+    type: TypeExpression
 }
 
 export const PortDefinition = 'PortDefinition';
@@ -393,7 +385,7 @@ export function isSelfPortSource(item: unknown): item is SelfPortSource {
 }
 
 export interface StringConstructor extends AstNode {
-    readonly $container: PortDefinition;
+    readonly $container: DataTypeConstructorDefinition | NodeTypeDefinition | NodeTypeDefinitionSource | ParenthesesTypeExpression | PortDefinition | TypeApplication;
     readonly $type: 'StringConstructor';
 }
 
@@ -416,7 +408,7 @@ export function isStringLiteral(item: unknown): item is StringLiteral {
 }
 
 export interface TypeApplication extends AstNode {
-    readonly $container: NodeTypeDefinition | NodeTypeDefinitionSource | ParenthesesTypeExpression | TypeApplication | TypeConstructor;
+    readonly $container: DataTypeConstructorDefinition | NodeTypeDefinition | NodeTypeDefinitionSource | ParenthesesTypeExpression | PortDefinition | TypeApplication;
     readonly $type: 'TypeApplication';
     arguments: Array<TypeExpression>
     dataType: Reference<SignatureType>
@@ -428,21 +420,8 @@ export function isTypeApplication(item: unknown): item is TypeApplication {
     return reflection.isInstance(item, TypeApplication);
 }
 
-export interface TypeConstructor extends AstNode {
-    readonly $container: PortDefinition;
-    readonly $type: 'TypeConstructor';
-    arguments: Array<TypeExpression>
-    constructor: Reference<DataTypeConstructorDefinition>
-}
-
-export const TypeConstructor = 'TypeConstructor';
-
-export function isTypeConstructor(item: unknown): item is TypeConstructor {
-    return reflection.isInstance(item, TypeConstructor);
-}
-
 export interface TypeParameter extends AstNode {
-    readonly $container: DataTypeConstructorDefinition | DataTypeDefinition | NodeTypeDefinition;
+    readonly $container: DataTypeDefinition | NodeTypeDefinition;
     readonly $type: 'TypeParameter';
     name: string
 }
@@ -454,7 +433,7 @@ export function isTypeParameter(item: unknown): item is TypeParameter {
 }
 
 export interface TypeParameterReference extends AstNode {
-    readonly $container: NodeTypeDefinition | NodeTypeDefinitionSource | ParenthesesTypeExpression | TypeApplication | TypeConstructor;
+    readonly $container: DataTypeConstructorDefinition | NodeTypeDefinition | NodeTypeDefinitionSource | ParenthesesTypeExpression | PortDefinition | TypeApplication;
     readonly $type: 'TypeParameterReference';
     typeParameter: Reference<TypeParameter>
 }
@@ -470,7 +449,6 @@ export interface BifrostAstType {
     BinaryWireTargetExpression: BinaryWireTargetExpression
     BooleanConstructor: BooleanConstructor
     ConstructorApplication: ConstructorApplication
-    DataType: DataType
     DataTypeConstructorDefinition: DataTypeConstructorDefinition
     DataTypeDefinition: DataTypeDefinition
     Expression: Expression
@@ -501,7 +479,6 @@ export interface BifrostAstType {
     StringConstructor: StringConstructor
     StringLiteral: StringLiteral
     TypeApplication: TypeApplication
-    TypeConstructor: TypeConstructor
     TypeExpression: TypeExpression
     TypeParameter: TypeParameter
     TypeParameterReference: TypeParameterReference
@@ -510,7 +487,7 @@ export interface BifrostAstType {
 export class BifrostAstReflection extends AbstractAstReflection {
 
     getAllTypes(): string[] {
-        return ['Addition', 'BinaryWireTargetExpression', 'BooleanConstructor', 'ConstructorApplication', 'DataType', 'DataTypeConstructorDefinition', 'DataTypeDefinition', 'Expression', 'Factor', 'File', 'FloatConstructor', 'InstanceSource', 'IntegerConstructor', 'LinkDefinition', 'MatchVariableDefinition', 'MatchVariableUsage', 'Node', 'NodePortExpression', 'NodePortSource', 'NodeTypeBody', 'NodeTypeDefinition', 'NodeTypeDefinitionSource', 'NumericLiteral', 'ParenthesesExpression', 'ParenthesesTypeExpression', 'PatternMatchDefinition', 'PatternMatching', 'PortDefinition', 'Primary', 'SelfPortExpression', 'SelfPortSource', 'SignatureType', 'StringConstructor', 'StringLiteral', 'TypeApplication', 'TypeConstructor', 'TypeExpression', 'TypeParameter', 'TypeParameterReference'];
+        return ['Addition', 'BinaryWireTargetExpression', 'BooleanConstructor', 'ConstructorApplication', 'DataTypeConstructorDefinition', 'DataTypeDefinition', 'Expression', 'Factor', 'File', 'FloatConstructor', 'InstanceSource', 'IntegerConstructor', 'LinkDefinition', 'MatchVariableDefinition', 'MatchVariableUsage', 'Node', 'NodePortExpression', 'NodePortSource', 'NodeTypeBody', 'NodeTypeDefinition', 'NodeTypeDefinitionSource', 'NumericLiteral', 'ParenthesesExpression', 'ParenthesesTypeExpression', 'PatternMatchDefinition', 'PatternMatching', 'PortDefinition', 'Primary', 'SelfPortExpression', 'SelfPortSource', 'SignatureType', 'StringConstructor', 'StringLiteral', 'TypeApplication', 'TypeExpression', 'TypeParameter', 'TypeParameterReference'];
     }
 
     protected override computeIsSubtype(subtype: string, supertype: string): boolean {
@@ -524,9 +501,11 @@ export class BifrostAstReflection extends AbstractAstReflection {
             case BooleanConstructor:
             case FloatConstructor:
             case IntegerConstructor:
+            case ParenthesesTypeExpression:
             case StringConstructor:
-            case TypeConstructor: {
-                return this.isSubtype(DataType, supertype);
+            case TypeApplication:
+            case TypeParameterReference: {
+                return this.isSubtype(TypeExpression, supertype);
             }
             case ConstructorApplication:
             case MatchVariableDefinition:
@@ -550,11 +529,6 @@ export class BifrostAstReflection extends AbstractAstReflection {
             case SelfPortSource: {
                 return this.isSubtype(InstanceSource, supertype);
             }
-            case ParenthesesTypeExpression:
-            case TypeApplication:
-            case TypeParameterReference: {
-                return this.isSubtype(TypeExpression, supertype);
-            }
             case Primary: {
                 return this.isSubtype(Factor, supertype);
             }
@@ -567,8 +541,7 @@ export class BifrostAstReflection extends AbstractAstReflection {
     getReferenceType(refInfo: ReferenceInfo): string {
         const referenceId = `${refInfo.container.$type}:${refInfo.property}`;
         switch (referenceId) {
-            case 'ConstructorApplication:constructor':
-            case 'TypeConstructor:constructor': {
+            case 'ConstructorApplication:constructor': {
                 return DataTypeConstructorDefinition;
             }
             case 'MatchVariableUsage:variable': {
@@ -614,7 +587,7 @@ export class BifrostAstReflection extends AbstractAstReflection {
                 return {
                     name: 'DataTypeConstructorDefinition',
                     mandatory: [
-                        { name: 'typeParameters', type: 'array' }
+                        { name: 'arguments', type: 'array' }
                     ]
                 };
             }
@@ -676,14 +649,6 @@ export class BifrostAstReflection extends AbstractAstReflection {
             case 'TypeApplication': {
                 return {
                     name: 'TypeApplication',
-                    mandatory: [
-                        { name: 'arguments', type: 'array' }
-                    ]
-                };
-            }
-            case 'TypeConstructor': {
-                return {
-                    name: 'TypeConstructor',
                     mandatory: [
                         { name: 'arguments', type: 'array' }
                     ]

@@ -1,6 +1,8 @@
 import { assertUnreachable, AstNode, AstNodeDescriptionProvider, AstTypeList, DefaultScopeProvider, getContainerOfType, Reference, ReferenceInfo, Scope, stream } from "langium";
 import { BifrostServices } from "./bifrost-module";
-import { BifrostAstType, DataTypeDefinition, InstanceSource, isConstructorApplication, isDataType, isMatchVariableUsage, isNode, isNodePortExpression, isNodePortSource, isNodeTypeBody, isNodeTypeDefinition, isNodeTypeDefinitionSource, isSelfPortExpression, isSelfPortSource, isSignatureType, isTypeApplication, isTypeParameterReference, NodeTypeBody, NodeTypeDefinition } from "./generated/ast";
+import { BifrostAstType, DataTypeDefinition, InstanceSource, isConstructorApplication, 
+  isMatchVariableUsage, isNodePortExpression, isNodePortSource, isNodeTypeBody, isNodeTypeDefinition, 
+  isNodeTypeDefinitionSource, isSelfPortExpression, isSelfPortSource, isSignatureType, isTypeApplication, isTypeParameterReference, NodeTypeBody, NodeTypeDefinition } from "./generated/ast";
 
 type ExtractKeysOfValueType<T, K> = { [I in keyof T]: T[I] extends K ? I : never }[keyof T];
 
@@ -75,14 +77,6 @@ export class BifrostScopeProvider extends DefaultScopeProvider {
         default:
           assertUnreachable(property);
       }
-    } else if(isNode(node)) {
-      const property = context.property as CrossReferencesOfAstNodeType<typeof node>;
-      switch(property) {
-        case 'module':
-          return this.createScope(this.indexManager.allElements(NodeTypeDefinition).toArray());
-        default:
-          assertUnreachable(property);
-      }
     } else if(isConstructorApplication(node)) {
       const property = context.property as CrossReferencesOfAstNodeType<typeof node>;
       switch(property) {
@@ -95,14 +89,6 @@ export class BifrostScopeProvider extends DefaultScopeProvider {
       const property = context.property as CrossReferencesOfAstNodeType<typeof node>;
       switch(property) {
         case 'variable':
-          return undefined!;
-        default:
-          assertUnreachable(property);
-      }
-    } else if(isDataType(node)) {
-      const property = context.property as CrossReferencesOfAstNodeType<typeof node>;
-      switch(property) {
-        case 'constructor':
           return undefined!;
         default:
           assertUnreachable(property);
