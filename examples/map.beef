@@ -15,15 +15,15 @@ node Map<a, b>(
 ) {
   match this.input with {
     case Nil {
-      wire Nil to this.result;
+      link Nil to this.result;
     }
     case Cons x? xs? {
       instance mapRest of Map<a, b>;
       instance call of this.function;
-      wire x to this.call.input;
-      wire xs to this.mapRest.input;
-      wire this.function to this.mapRest.function;
-      wire Cons (this.call.result) (this.mapRest.result) to this.result;
+      link x to this.call.input;
+      link xs to this.mapRest.input;
+      link this.function to this.mapRest.function;
+      link Cons (this.call.result) (this.mapRest.result) to this.result;
     }
   }
 }

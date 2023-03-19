@@ -1,19 +1,20 @@
-implementation Fibonacci { 
-  in n of Integer;
-  out result of Integer;
+node Fibonacci(
+  in n of Integer,
+  out result of Integer
+) { 
   match this.n with {
     case 0 {
-      wire 0 to this.result;
+      link 0 to this.result;
     }
     case 1 {
-      wire 1 to this.result;
+      link 1 to this.result;
     }
     case x? {
       instance minusOne of Fibonacci;
       instance minusTwo of Fibonacci;
-      wire x - 1 to minusOne.n;
-      wire x - 2 to minusTwo.n;
-      wire minusOne.result + minusTwo.result to this.result;
+      link x - 1 to minusOne.n;
+      link x - 2 to minusTwo.n;
+      link minusOne.result + minusTwo.result to this.result;
     }
   }
 }

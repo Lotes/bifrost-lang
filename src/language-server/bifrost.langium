@@ -2,54 +2,50 @@ grammar Bifrost
 
 entry File: 
     (
-        interfaces+=InterfaceDefinition
-        | implementations+=ImplementationDefinition
+        implementations+=NodeTypeDefinition
         | dataTypeDefinitions+=DataTypeDefinition
     )*
     ;
 
-type ProcessSignatureType = InterfaceDefinition | ImplementationDefinition;
-type SignatureType = DataTypeDefinition | ProcessSignatureType;
+type SignatureType = DataTypeDefinition | NodeTypeDefinition;
+
+fragment TypeParametersClause: '<' typeParameters+=TypeParameter (',' typeParameters+=TypeParameter)* '>';
+fragment TypeParameterAssignmentsClause: '<' arguments+=TypeExpression (',' arguments+=TypeExpression)* '>';
 
 DataTypeDefinition:
-    'datatype' name=UPPER_ID typeParameters+=TypeParameter* '{'
+    'datatype' name=UPPER_ID TypeParametersClause? '{'
         constructors+=DataTypeConstructorDefinition (',' constructors+=DataTypeConstructorDefinition)*
     '}'
     ;
 
-TypeParameter: name=LOWER_ID;
-
 DataTypeConstructorDefinition:
-    name=UPPER_ID parameters+=TypeExpression*
+    name=UPPER_ID TypeParametersClause?
     ;
 
-TypeExpression:
-    {infer TypeParameterReference} typeParameter=[TypeParameter]
-    | {infer TypeApplication} dataType=[SignatureType] typeParameters+=TypeExpression*
-    | {infer ParenthesesTypeExpression} '(' type=TypeExpression ')'
-    ;
-    
-InterfaceDefinition:
-    'interface' name=UPPER_ID typeParameters+=TypeParameter* '{'
-        (ports+=PortDefinition ';')*
-    '}'
+NodeTypeDefinition:
+    abstract?='abstract'?
+    'nodetype' name=UPPER_ID TypeParametersClause? 
+    ('of' iface=[NodeTypeDefinition] TypeParameterAssignmentsClause?)?
+    '(' (ports+=PortDefinition (',' ports+=PortDefinition)*)? ')' 
+    '{' body=NodeTypeBody '}'
     ;
 
-
-ImplementationDefinition:
-    'implementation' name=UPPER_ID typeParameters+=TypeParameter* ('of' iface=[InterfaceDefinition] arguments+=TypeExpression*)? '{' 
-        (ports+=PortDefinition ';')*
-        body=ImplementationBody
-    '}'
-    ;
-
-ImplementationBody:
+NodeTypeBody:
     (
-        modules+=ModuleInstance ';'
-        | links+=WireDefinition ';'
+        nodes+=Node ';'
+        | links+=LinkDefinition ';'
         | matches+=PatternMatching
     )*
     ;
+
+TypeParameter: name=LOWER_ID;
+
+TypeExpression:
+    {infer TypeParameterReference} typeParameter=[TypeParameter]
+    | {infer TypeApplication} dataType=[SignatureType] TypeParameterAssignmentsClause?
+    | {infer ParenthesesTypeExpression} '(' type=TypeExpression ')'
+    ;
+
 
 PatternMatching:
     'match' source=Expression 'with' '{' 
@@ -59,10 +55,10 @@ PatternMatching:
 
 PatternMatchDefinition:
     'case' pattern=Expression '{'
-        body=ImplementationBody
+        body=NodeTypeBody
     '}';
 
-WireDefinition: 'wire' source=Expression 'to' target=Expression;
+LinkDefinition: 'link' source=Expression 'to' target=Expression;
 
 Expression:
     Addition
@@ -79,24 +75,30 @@ Factor:
     ;
 
 Primary:    
-     {infer SelfInstancePortExpression} 'this' '.' portRef=[PortDefinition:LOWER_ID]
-     | {infer ForeignInstancePortExpression} instanceRef=[ModuleInstance] '.' portRef=[PortDefinition:LOWER_ID]
+     {infer SelfPortExpression} 'this' '.' portRef=[PortDefinition:LOWER_ID]
+     | {infer NodePortExpression} 'this' '.' instanceRef=[Node] '.' portRef=[PortDefinition:LOWER_ID]
      | {infer NumericLiteral} number=INT
      | {infer StringLiteral} string=STRING
-     | {infer ParenthesesWireTargetExpression} '(' expression=Expression ')'
+     | {infer ParenthesesExpression} '(' expression=Expression ')'
      | {infer ConstructorApplication} constructor=[DataTypeConstructorDefinition] arguments+=Primary*
      | {infer MatchVariableDefinition} name=LOWER_ID '?'
      | {infer MatchVariableUsage} variable=[MatchVariableDefinition:LOWER_ID]
      ;
 
-ModuleInstance:
-    'instance' name=LOWER_ID 'of' module=[ImplementationDefinition] arguments+=TypeExpression*
+Node:
+    'node' name=LOWER_ID 'of' source=InstanceSource
+    ;
+
+InstanceSource:
+    {infer NodeTypeDefinitionSource} nodeDef=[NodeTypeDefinition] TypeParameterAssignmentsClause?
+    | {infer SelfPortSource} 'this' '.' portRef=[PortDefinition:LOWER_ID]
+    | {infer NodePortSource} 'this' '.' instanceRef=[Node] '.' portRef=[PortDefinition:LOWER_ID]
     ;
 
 PortDefinition: direction=Direction name=LOWER_ID 'of' type=DataType;
 
 DataType:
-    {infer TypeConstructor} expr=TypeExpression
+    {infer TypeConstructor} constructor=[DataTypeConstructorDefinition] TypeParameterAssignmentsClause?
     | {infer IntegerConstructor} 'Integer'
     | {infer FloatConstructor} 'Float'
     | {infer StringConstructor} 'String'
