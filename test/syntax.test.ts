@@ -29,7 +29,7 @@ describe('Syntax', () => {
   it('Data type with type arguments', () => expectIsParsable(`datatype Foo<a> { Bay, Bar a, Baz a a }`)); 
   it('Data type with recursive type arguments', () => expectIsParsable(`datatype Tree<a> { Leaf a, Node (Tree<a>) (Tree<a>) }`)); 
 
-  it('Node type with in/output', () => expectIsParsable(`abstract nodetype Convert(in input of Integer, out output of Integer) { }`)); 
+  it('Node type with in/output', () => expectIsParsable(`abstract nodetype Convert(in input of Integer, out output of Integer) { }`));
   it('Node type with generic in/output', () => expectIsParsable(`abstract nodetype Convert<a, b>(in input of a, out output of b) { }`));
 
 });
