@@ -2,7 +2,7 @@
 
 Is a domain-specific language for functional programming described through a graph structure.
 
-This project in this moment is a finger practice In German it is called `Fingerübung` ✌. It is for training purpose and for finding opportunities to improve the tooling around [Langium](https://langium.org/).
+This project in this moment is a finger practice. In German it is called `Fingerübung` ✌. It is for training purpose and for finding opportunities to improve the tooling around [Langium](https://langium.org/).
 
 The syntax is inspired by Haskell.
 
