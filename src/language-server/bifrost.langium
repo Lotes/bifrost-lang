@@ -65,21 +65,22 @@ PatternMatchDefinition:
 
 LinkDefinition: 'link' source=Expression 'to' target=Expression;
 
-Expression:
+Expression infers Expression:
     Addition
-    ({infer BinaryWireTargetExpression.left=current} op=('=='|'!='|'<'|'>'|'<='|'>=') right=Addition)*
+    ({infer BinaryExpression.left=current} op=('=='|'!='|'<'|'>'|'<='|'>=') right=Addition)*
     ;
-Addition:
+
+Addition infers Expression:
     Factor 
-    ({infer BinaryWireTargetExpression.left=current} op=('+'|'-') right=Factor)*
+    ({infer BinaryExpression.left=current} op=('+'|'-') right=Factor)*
     ;
 
-Factor:
+Factor infers Expression:
     Primary 
-    ({infer BinaryWireTargetExpression.left=current} op=('*'|'/'|'mod'|'div') right=Primary)*
+    ({infer BinaryExpression.left=current} op=('*'|'/'|'mod'|'div') right=Primary)*
     ;
 
-Primary:    
+Primary infers Expression:    
      {infer SelfPortExpression} 'this' '.' portRef=[PortDefinition:LOWER_ID]
      | {infer NodePortExpression} 'this' '.' instanceRef=[Node] '.' portRef=[PortDefinition:LOWER_ID]
      | {infer NumericLiteral} number=INT
@@ -91,7 +92,7 @@ Primary:
      ;
 
 Node:
-    'node' name=LOWER_ID 'of' source=InstanceSource
+    'node' name=LOWER_ID 'of' 'new' source=InstanceSource
     ;
 
 InstanceSource:

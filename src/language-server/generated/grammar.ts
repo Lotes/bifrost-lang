@@ -867,6 +867,10 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ?? (loadedBifr
     {
       "$type": "ParserRule",
       "name": "Expression",
+      "inferredType": {
+        "$type": "InferredType",
+        "name": "Expression"
+      },
       "definition": {
         "$type": "Group",
         "elements": [
@@ -884,7 +888,7 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ?? (loadedBifr
                 "$type": "Action",
                 "inferredType": {
                   "$type": "InferredType",
-                  "name": "BinaryWireTargetExpression"
+                  "name": "BinaryExpression"
                 },
                 "feature": "left",
                 "operator": "="
@@ -950,6 +954,10 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ?? (loadedBifr
     {
       "$type": "ParserRule",
       "name": "Addition",
+      "inferredType": {
+        "$type": "InferredType",
+        "name": "Expression"
+      },
       "definition": {
         "$type": "Group",
         "elements": [
@@ -967,7 +975,7 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ?? (loadedBifr
                 "$type": "Action",
                 "inferredType": {
                   "$type": "InferredType",
-                  "name": "BinaryWireTargetExpression"
+                  "name": "BinaryExpression"
                 },
                 "feature": "left",
                 "operator": "="
@@ -1017,6 +1025,10 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ?? (loadedBifr
     {
       "$type": "ParserRule",
       "name": "Factor",
+      "inferredType": {
+        "$type": "InferredType",
+        "name": "Expression"
+      },
       "definition": {
         "$type": "Group",
         "elements": [
@@ -1034,7 +1046,7 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ?? (loadedBifr
                 "$type": "Action",
                 "inferredType": {
                   "$type": "InferredType",
-                  "name": "BinaryWireTargetExpression"
+                  "name": "BinaryExpression"
                 },
                 "feature": "left",
                 "operator": "="
@@ -1092,6 +1104,10 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ?? (loadedBifr
     {
       "$type": "ParserRule",
       "name": "Primary",
+      "inferredType": {
+        "$type": "InferredType",
+        "name": "Expression"
+      },
       "definition": {
         "$type": "Alternatives",
         "elements": [
@@ -1399,6 +1415,10 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ?? (loadedBifr
           {
             "$type": "Keyword",
             "value": "of"
+          },
+          {
+            "$type": "Keyword",
+            "value": "new"
           },
           {
             "$type": "Assignment",

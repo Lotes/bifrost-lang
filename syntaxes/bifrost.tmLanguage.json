@@ -10,7 +10,7 @@
     },
     {
       "name": "keyword.control.bifrost",
-      "match": "\\b(Boolean|Float|Integer|String|abstract|case|datatype|div|in|link|match|mod|node|nodetype|of|out|this|to|with)\\b"
+      "match": "\\b(Boolean|Float|Integer|String|abstract|case|datatype|div|in|link|match|mod|new|node|nodetype|of|out|this|to|with)\\b"
     },
     {
       "name": "string.quoted.double.bifrost",

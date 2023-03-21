@@ -6,30 +6,14 @@
 /* eslint-disable */
 import { AstNode, AbstractAstReflection, Reference, ReferenceInfo, TypeMetaData } from 'langium';
 
-export type Addition = BinaryWireTargetExpression | Factor;
-
-export const Addition = 'Addition';
-
-export function isAddition(item: unknown): item is Addition {
-    return reflection.isInstance(item, Addition);
-}
-
 export type Direction = 'in' | 'out';
 
-export type Expression = Addition | BinaryWireTargetExpression;
+export type Expression = BinaryExpression | ConstructorApplication | MatchVariableDefinition | MatchVariableUsage | NodePortExpression | NumericLiteral | ParenthesesExpression | SelfPortExpression | StringLiteral;
 
 export const Expression = 'Expression';
 
 export function isExpression(item: unknown): item is Expression {
     return reflection.isInstance(item, Expression);
-}
-
-export type Factor = BinaryWireTargetExpression | Primary;
-
-export const Factor = 'Factor';
-
-export function isFactor(item: unknown): item is Factor {
-    return reflection.isInstance(item, Factor);
 }
 
 export type InstanceSource = NodePortSource | NodeTypeDefinitionSource | SelfPortSource;
@@ -38,14 +22,6 @@ export const InstanceSource = 'InstanceSource';
 
 export function isInstanceSource(item: unknown): item is InstanceSource {
     return reflection.isInstance(item, InstanceSource);
-}
-
-export type Primary = ConstructorApplication | MatchVariableDefinition | MatchVariableUsage | NodePortExpression | NumericLiteral | ParenthesesExpression | SelfPortExpression | StringLiteral;
-
-export const Primary = 'Primary';
-
-export function isPrimary(item: unknown): item is Primary {
-    return reflection.isInstance(item, Primary);
 }
 
 export type SignatureType = DataTypeDefinition | NodeTypeDefinition;
@@ -64,18 +40,18 @@ export function isTypeExpression(item: unknown): item is TypeExpression {
     return reflection.isInstance(item, TypeExpression);
 }
 
-export interface BinaryWireTargetExpression extends AstNode {
-    readonly $container: BinaryWireTargetExpression | ConstructorApplication | LinkDefinition | ParenthesesExpression | PatternMatchDefinition | PatternMatching;
-    readonly $type: 'BinaryWireTargetExpression';
-    left: Addition | Factor | Primary
+export interface BinaryExpression extends AstNode {
+    readonly $container: BinaryExpression | ConstructorApplication | LinkDefinition | ParenthesesExpression | PatternMatchDefinition | PatternMatching;
+    readonly $type: 'BinaryExpression';
+    left: Expression
     op: '!=' | '*' | '+' | '-' | '/' | '<' | '<=' | '==' | '>' | '>=' | 'div' | 'mod'
-    right: Addition | Factor | Primary
+    right: Expression
 }
 
-export const BinaryWireTargetExpression = 'BinaryWireTargetExpression';
+export const BinaryExpression = 'BinaryExpression';
 
-export function isBinaryWireTargetExpression(item: unknown): item is BinaryWireTargetExpression {
-    return reflection.isInstance(item, BinaryWireTargetExpression);
+export function isBinaryExpression(item: unknown): item is BinaryExpression {
+    return reflection.isInstance(item, BinaryExpression);
 }
 
 export interface BooleanConstructor extends AstNode {
@@ -90,9 +66,9 @@ export function isBooleanConstructor(item: unknown): item is BooleanConstructor 
 }
 
 export interface ConstructorApplication extends AstNode {
-    readonly $container: BinaryWireTargetExpression | ConstructorApplication | LinkDefinition | ParenthesesExpression | PatternMatchDefinition | PatternMatching;
+    readonly $container: BinaryExpression | ConstructorApplication | LinkDefinition | ParenthesesExpression | PatternMatchDefinition | PatternMatching;
     readonly $type: 'ConstructorApplication';
-    arguments: Array<Primary>
+    arguments: Array<Expression>
     constructor: Reference<DataTypeConstructorDefinition>
 }
 
@@ -177,7 +153,7 @@ export function isLinkDefinition(item: unknown): item is LinkDefinition {
 }
 
 export interface MatchVariableDefinition extends AstNode {
-    readonly $container: BinaryWireTargetExpression | ConstructorApplication | LinkDefinition | ParenthesesExpression | PatternMatchDefinition | PatternMatching;
+    readonly $container: BinaryExpression | ConstructorApplication | LinkDefinition | ParenthesesExpression | PatternMatchDefinition | PatternMatching;
     readonly $type: 'MatchVariableDefinition';
     name: string
 }
@@ -189,7 +165,7 @@ export function isMatchVariableDefinition(item: unknown): item is MatchVariableD
 }
 
 export interface MatchVariableUsage extends AstNode {
-    readonly $container: BinaryWireTargetExpression | ConstructorApplication | LinkDefinition | ParenthesesExpression | PatternMatchDefinition | PatternMatching;
+    readonly $container: BinaryExpression | ConstructorApplication | LinkDefinition | ParenthesesExpression | PatternMatchDefinition | PatternMatching;
     readonly $type: 'MatchVariableUsage';
     variable: Reference<MatchVariableDefinition>
 }
@@ -214,7 +190,7 @@ export function isNode(item: unknown): item is Node {
 }
 
 export interface NodePortExpression extends AstNode {
-    readonly $container: BinaryWireTargetExpression | ConstructorApplication | LinkDefinition | ParenthesesExpression | PatternMatchDefinition | PatternMatching;
+    readonly $container: BinaryExpression | ConstructorApplication | LinkDefinition | ParenthesesExpression | PatternMatchDefinition | PatternMatching;
     readonly $type: 'NodePortExpression';
     instanceRef: Reference<Node>
     portRef: Reference<PortDefinition>
@@ -285,7 +261,7 @@ export function isNodeTypeDefinitionSource(item: unknown): item is NodeTypeDefin
 }
 
 export interface NumericLiteral extends AstNode {
-    readonly $container: BinaryWireTargetExpression | ConstructorApplication | LinkDefinition | ParenthesesExpression | PatternMatchDefinition | PatternMatching;
+    readonly $container: BinaryExpression | ConstructorApplication | LinkDefinition | ParenthesesExpression | PatternMatchDefinition | PatternMatching;
     readonly $type: 'NumericLiteral';
     number: string
 }
@@ -297,7 +273,7 @@ export function isNumericLiteral(item: unknown): item is NumericLiteral {
 }
 
 export interface ParenthesesExpression extends AstNode {
-    readonly $container: BinaryWireTargetExpression | ConstructorApplication | LinkDefinition | ParenthesesExpression | PatternMatchDefinition | PatternMatching;
+    readonly $container: BinaryExpression | ConstructorApplication | LinkDefinition | ParenthesesExpression | PatternMatchDefinition | PatternMatching;
     readonly $type: 'ParenthesesExpression';
     expression: Expression
 }
@@ -361,7 +337,7 @@ export function isPortDefinition(item: unknown): item is PortDefinition {
 }
 
 export interface SelfPortExpression extends AstNode {
-    readonly $container: BinaryWireTargetExpression | ConstructorApplication | LinkDefinition | ParenthesesExpression | PatternMatchDefinition | PatternMatching;
+    readonly $container: BinaryExpression | ConstructorApplication | LinkDefinition | ParenthesesExpression | PatternMatchDefinition | PatternMatching;
     readonly $type: 'SelfPortExpression';
     portRef: Reference<PortDefinition>
 }
@@ -396,7 +372,7 @@ export function isStringConstructor(item: unknown): item is StringConstructor {
 }
 
 export interface StringLiteral extends AstNode {
-    readonly $container: BinaryWireTargetExpression | ConstructorApplication | LinkDefinition | ParenthesesExpression | PatternMatchDefinition | PatternMatching;
+    readonly $container: BinaryExpression | ConstructorApplication | LinkDefinition | ParenthesesExpression | PatternMatchDefinition | PatternMatching;
     readonly $type: 'StringLiteral';
     string: string
 }
@@ -445,14 +421,12 @@ export function isTypeParameterReference(item: unknown): item is TypeParameterRe
 }
 
 export interface BifrostAstType {
-    Addition: Addition
-    BinaryWireTargetExpression: BinaryWireTargetExpression
+    BinaryExpression: BinaryExpression
     BooleanConstructor: BooleanConstructor
     ConstructorApplication: ConstructorApplication
     DataTypeConstructorDefinition: DataTypeConstructorDefinition
     DataTypeDefinition: DataTypeDefinition
     Expression: Expression
-    Factor: Factor
     File: File
     FloatConstructor: FloatConstructor
     InstanceSource: InstanceSource
@@ -472,7 +446,6 @@ export interface BifrostAstType {
     PatternMatchDefinition: PatternMatchDefinition
     PatternMatching: PatternMatching
     PortDefinition: PortDefinition
-    Primary: Primary
     SelfPortExpression: SelfPortExpression
     SelfPortSource: SelfPortSource
     SignatureType: SignatureType
@@ -487,16 +460,21 @@ export interface BifrostAstType {
 export class BifrostAstReflection extends AbstractAstReflection {
 
     getAllTypes(): string[] {
-        return ['Addition', 'BinaryWireTargetExpression', 'BooleanConstructor', 'ConstructorApplication', 'DataTypeConstructorDefinition', 'DataTypeDefinition', 'Expression', 'Factor', 'File', 'FloatConstructor', 'InstanceSource', 'IntegerConstructor', 'LinkDefinition', 'MatchVariableDefinition', 'MatchVariableUsage', 'Node', 'NodePortExpression', 'NodePortSource', 'NodeTypeBody', 'NodeTypeDefinition', 'NodeTypeDefinitionSource', 'NumericLiteral', 'ParenthesesExpression', 'ParenthesesTypeExpression', 'PatternMatchDefinition', 'PatternMatching', 'PortDefinition', 'Primary', 'SelfPortExpression', 'SelfPortSource', 'SignatureType', 'StringConstructor', 'StringLiteral', 'TypeApplication', 'TypeExpression', 'TypeParameter', 'TypeParameterReference'];
+        return ['BinaryExpression', 'BooleanConstructor', 'ConstructorApplication', 'DataTypeConstructorDefinition', 'DataTypeDefinition', 'Expression', 'File', 'FloatConstructor', 'InstanceSource', 'IntegerConstructor', 'LinkDefinition', 'MatchVariableDefinition', 'MatchVariableUsage', 'Node', 'NodePortExpression', 'NodePortSource', 'NodeTypeBody', 'NodeTypeDefinition', 'NodeTypeDefinitionSource', 'NumericLiteral', 'ParenthesesExpression', 'ParenthesesTypeExpression', 'PatternMatchDefinition', 'PatternMatching', 'PortDefinition', 'SelfPortExpression', 'SelfPortSource', 'SignatureType', 'StringConstructor', 'StringLiteral', 'TypeApplication', 'TypeExpression', 'TypeParameter', 'TypeParameterReference'];
     }
 
     protected override computeIsSubtype(subtype: string, supertype: string): boolean {
         switch (subtype) {
-            case Addition: {
+            case BinaryExpression:
+            case ConstructorApplication:
+            case MatchVariableDefinition:
+            case MatchVariableUsage:
+            case NodePortExpression:
+            case NumericLiteral:
+            case ParenthesesExpression:
+            case SelfPortExpression:
+            case StringLiteral: {
                 return this.isSubtype(Expression, supertype);
-            }
-            case BinaryWireTargetExpression: {
-                return this.isSubtype(Addition, supertype) || this.isSubtype(Expression, supertype) || this.isSubtype(Factor, supertype);
             }
             case BooleanConstructor:
             case FloatConstructor:
@@ -507,30 +485,14 @@ export class BifrostAstReflection extends AbstractAstReflection {
             case TypeParameterReference: {
                 return this.isSubtype(TypeExpression, supertype);
             }
-            case ConstructorApplication:
-            case MatchVariableDefinition:
-            case MatchVariableUsage:
-            case NodePortExpression:
-            case NumericLiteral:
-            case ParenthesesExpression:
-            case SelfPortExpression:
-            case StringLiteral: {
-                return this.isSubtype(Primary, supertype);
-            }
             case DataTypeDefinition:
             case NodeTypeDefinition: {
                 return this.isSubtype(SignatureType, supertype);
-            }
-            case Factor: {
-                return this.isSubtype(Addition, supertype);
             }
             case NodePortSource:
             case NodeTypeDefinitionSource:
             case SelfPortSource: {
                 return this.isSubtype(InstanceSource, supertype);
-            }
-            case Primary: {
-                return this.isSubtype(Factor, supertype);
             }
             default: {
                 return false;
