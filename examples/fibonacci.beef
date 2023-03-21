@@ -1,4 +1,4 @@
-node Fibonacci(
+nodetype Fibonacci(
   in n of Integer,
   out result of Integer
 ) { 
@@ -10,11 +10,11 @@ node Fibonacci(
       link 1 to this.result;
     }
     case x? {
-      instance minusOne of Fibonacci;
-      instance minusTwo of Fibonacci;
-      link x - 1 to minusOne.n;
-      link x - 2 to minusTwo.n;
-      link minusOne.result + minusTwo.result to this.result;
+      node minusOne of new Fibonacci;
+      node minusTwo of new Fibonacci;
+      link x - 1 to this.minusOne.n;
+      link x - 2 to this.minusTwo.n;
+      link this.minusOne.result + this.minusTwo.result to this.result;
     }
   }
 }

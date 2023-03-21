@@ -1,5 +1,6 @@
 import { assertUnreachable, AstNode } from "langium";
-import { BifrostAstType, DataTypeDefinition, isBooleanConstructor, isFloatConstructor, isStringConstructor, isIntegerConstructor, NodeTypeDefinition, isTypeApplication, isTypeParameterReference, isParenthesesTypeExpression, isBinaryExpression, isConstructorApplication, isMatchVariableDefinition, isMatchVariableUsage, isNodePortExpression, isNumericLiteral, isParenthesesExpression, isSelfPortExpression, isStringLiteral, isSelfPortSource, isNodeTypeDefinition, isNodeTypeDefinitionSource, isDataTypeDefinition, isPatternMatchDefinition } from "./generated/ast";
+import { BifrostAstType, DataTypeDefinition, isBooleanConstructor, isFloatConstructor,
+   isStringConstructor, isIntegerConstructor, NodeTypeDefinition, isTypeApplication, isTypeParameterReference, isParenthesesTypeExpression, isBinaryExpression, isConstructorApplication, isMatchVariableDefinition, isMatchVariableUsage, isNodePortExpression, isNumericLiteral, isParenthesesExpression, isSelfPortExpression, isStringLiteral, isSelfPortSource, isNodeTypeDefinition, isNodeTypeDefinitionSource, isDataTypeDefinition, isPatternMatching, isPatternMatchDefinition } from "./generated/ast";
 
 export interface TypeDescriptionBase {
   scope: 'value';
@@ -32,7 +33,7 @@ export interface NoneTypeDescription extends ValueLevelTypeDescriptionBase {
 export type TypeDescription = PrimitiveTypeDescription | DataTypeDescription | NodeTypeDescription | NoneTypeDescription;
 
 type TypeComputers = {
-  [key in keyof BifrostAstType]: (this: TypeComputers, node: BifrostAstType[key]) => TypeDescription;
+  [key in keyof BifrostAstType]: (this: TypeComputers, node: BifrostAstType[key]) => TypeDescription|undefined;
 }
 
 export const ValueExpressionTypes = {
@@ -51,11 +52,11 @@ export function inferType(node: AstNode) {
 }
 
 const typeComputers: TypeComputers = {
-  BinaryExpression(node) {
-    const leftType = this.Expression(node.left);
+  BinaryExpression(_node) {
+    //const leftType = this.Expression(node.left);
     //const rightType = this.Expression(node.right);
     //const operator = node.op;
-    return leftType; //TODO fix it
+    return undefined; //TODO fix it
   },
   BooleanConstructor(_node) {
     return ValueExpressionTypes.Boolean();
@@ -116,8 +117,8 @@ const typeComputers: TypeComputers = {
   },
   MatchVariableDefinition(node) {
       let container: AstNode|undefined = node.$container;
-      while(container && !isPatternMatchDefinition(container)) {
-        if(isParenthesesExpression(container)) {
+      while(container && !isPatternMatching(container)) {
+        if(isParenthesesExpression(container) || isPatternMatchDefinition(container)) {
           container = container.$container;
         } else if(isConstructorApplication(container)) {
           const index = container.arguments.findIndex(a => a === node);
@@ -128,7 +129,10 @@ const typeComputers: TypeComputers = {
           break;
         }
       }
-      return ValueExpressionTypes.None();
+      if(container && isPatternMatching(container)) {
+        return this.Expression(container.source);
+      }
+      return undefined;
   },
   MatchVariableUsage(node) {
     return this.MatchVariableDefinition(node.variable.ref!);
