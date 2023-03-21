@@ -38,6 +38,6 @@ Things in my head are:
   * creating a web assembly
 * a mobile app for the graphical counter part
 
-## License
+## > license
 
 [MIT](LICENSE.md)
