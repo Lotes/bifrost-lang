@@ -1517,61 +1517,6 @@ export const BifrostGrammar = (): Grammar => loadedBifrostGrammar ?? (loadedBifr
                 }
               }
             ]
-          },
-          {
-            "$type": "Group",
-            "elements": [
-              {
-                "$type": "Action",
-                "inferredType": {
-                  "$type": "InferredType",
-                  "name": "NodePortSource"
-                }
-              },
-              {
-                "$type": "Keyword",
-                "value": "this"
-              },
-              {
-                "$type": "Keyword",
-                "value": "."
-              },
-              {
-                "$type": "Assignment",
-                "feature": "instanceRef",
-                "operator": "=",
-                "terminal": {
-                  "$type": "CrossReference",
-                  "type": {
-                    "$ref": "#/rules@17"
-                  },
-                  "deprecatedSyntax": false
-                }
-              },
-              {
-                "$type": "Keyword",
-                "value": "."
-              },
-              {
-                "$type": "Assignment",
-                "feature": "portRef",
-                "operator": "=",
-                "terminal": {
-                  "$type": "CrossReference",
-                  "type": {
-                    "$ref": "#/rules@19"
-                  },
-                  "terminal": {
-                    "$type": "RuleCall",
-                    "rule": {
-                      "$ref": "#/rules@22"
-                    },
-                    "arguments": []
-                  },
-                  "deprecatedSyntax": false
-                }
-              }
-            ]
           }
         ]
       },

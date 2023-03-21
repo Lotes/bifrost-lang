@@ -18,8 +18,8 @@ nodetype Map<a, b>(
       link Nil to this.result;
     }
     case Cons x? xs? {
-      node mapRest of Map<a, b>;
-      node call of this.function;
+      node mapRest of new Map<a, b>;
+      node call of new this.function;
       link x to this.call.input;
       link xs to this.mapRest.input;
       link this.function to this.mapRest.function;

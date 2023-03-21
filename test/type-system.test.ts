@@ -47,5 +47,5 @@ describe('Type system', () => {
       '/implementations@0/ports@0': () => ValueExpressionTypes.Integer(),
       '/implementations@0/ports@0/type': () => ValueExpressionTypes.Integer(),
     }
-  )); 
+  ));
 });

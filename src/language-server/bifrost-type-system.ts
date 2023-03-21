@@ -1,5 +1,5 @@
 import { assertUnreachable, AstNode } from "langium";
-import { BifrostAstType, DataTypeDefinition, isBooleanConstructor, isFloatConstructor, isStringConstructor, isIntegerConstructor, NodeTypeDefinition, isTypeApplication, isTypeParameterReference, isParenthesesTypeExpression, isBinaryExpression, isConstructorApplication, isMatchVariableDefinition, isMatchVariableUsage, isNodePortExpression, isNumericLiteral, isParenthesesExpression, isSelfPortExpression, isStringLiteral, isSelfPortSource, isNodePortSource, isNodeTypeDefinition, isNodeTypeDefinitionSource, isDataTypeDefinition, isPatternMatchDefinition } from "./generated/ast";
+import { BifrostAstType, DataTypeDefinition, isBooleanConstructor, isFloatConstructor, isStringConstructor, isIntegerConstructor, NodeTypeDefinition, isTypeApplication, isTypeParameterReference, isParenthesesTypeExpression, isBinaryExpression, isConstructorApplication, isMatchVariableDefinition, isMatchVariableUsage, isNodePortExpression, isNumericLiteral, isParenthesesExpression, isSelfPortExpression, isStringLiteral, isSelfPortSource, isNodeTypeDefinition, isNodeTypeDefinitionSource, isDataTypeDefinition, isPatternMatchDefinition } from "./generated/ast";
 
 export interface TypeDescriptionBase {
   scope: 'value';
@@ -104,8 +104,6 @@ const typeComputers: TypeComputers = {
       return this.NodeTypeDefinitionSource(node);
     } else if(isSelfPortSource(node)) {
       return this.SelfPortSource(node);
-    } else if(isNodePortSource(node)) {
-      return this.NodePortSource(node);
     } else {
       assertUnreachable(node);
     }
@@ -139,9 +137,6 @@ const typeComputers: TypeComputers = {
     return this.InstanceSource(node.source);
   },
   NodePortExpression(node) {
-    return this.PortDefinition(node.portRef.ref!);
-  },
-  NodePortSource(node) {
     return this.PortDefinition(node.portRef.ref!);
   },
   NodeTypeDefinition(node) {

@@ -16,7 +16,7 @@ export function isExpression(item: unknown): item is Expression {
     return reflection.isInstance(item, Expression);
 }
 
-export type InstanceSource = NodePortSource | NodeTypeDefinitionSource | SelfPortSource;
+export type InstanceSource = NodeTypeDefinitionSource | SelfPortSource;
 
 export const InstanceSource = 'InstanceSource';
 
@@ -200,19 +200,6 @@ export const NodePortExpression = 'NodePortExpression';
 
 export function isNodePortExpression(item: unknown): item is NodePortExpression {
     return reflection.isInstance(item, NodePortExpression);
-}
-
-export interface NodePortSource extends AstNode {
-    readonly $container: Node;
-    readonly $type: 'NodePortSource';
-    instanceRef: Reference<Node>
-    portRef: Reference<PortDefinition>
-}
-
-export const NodePortSource = 'NodePortSource';
-
-export function isNodePortSource(item: unknown): item is NodePortSource {
-    return reflection.isInstance(item, NodePortSource);
 }
 
 export interface NodeTypeBody extends AstNode {
@@ -436,7 +423,6 @@ export interface BifrostAstType {
     MatchVariableUsage: MatchVariableUsage
     Node: Node
     NodePortExpression: NodePortExpression
-    NodePortSource: NodePortSource
     NodeTypeBody: NodeTypeBody
     NodeTypeDefinition: NodeTypeDefinition
     NodeTypeDefinitionSource: NodeTypeDefinitionSource
@@ -460,7 +446,7 @@ export interface BifrostAstType {
 export class BifrostAstReflection extends AbstractAstReflection {
 
     getAllTypes(): string[] {
-        return ['BinaryExpression', 'BooleanConstructor', 'ConstructorApplication', 'DataTypeConstructorDefinition', 'DataTypeDefinition', 'Expression', 'File', 'FloatConstructor', 'InstanceSource', 'IntegerConstructor', 'LinkDefinition', 'MatchVariableDefinition', 'MatchVariableUsage', 'Node', 'NodePortExpression', 'NodePortSource', 'NodeTypeBody', 'NodeTypeDefinition', 'NodeTypeDefinitionSource', 'NumericLiteral', 'ParenthesesExpression', 'ParenthesesTypeExpression', 'PatternMatchDefinition', 'PatternMatching', 'PortDefinition', 'SelfPortExpression', 'SelfPortSource', 'SignatureType', 'StringConstructor', 'StringLiteral', 'TypeApplication', 'TypeExpression', 'TypeParameter', 'TypeParameterReference'];
+        return ['BinaryExpression', 'BooleanConstructor', 'ConstructorApplication', 'DataTypeConstructorDefinition', 'DataTypeDefinition', 'Expression', 'File', 'FloatConstructor', 'InstanceSource', 'IntegerConstructor', 'LinkDefinition', 'MatchVariableDefinition', 'MatchVariableUsage', 'Node', 'NodePortExpression', 'NodeTypeBody', 'NodeTypeDefinition', 'NodeTypeDefinitionSource', 'NumericLiteral', 'ParenthesesExpression', 'ParenthesesTypeExpression', 'PatternMatchDefinition', 'PatternMatching', 'PortDefinition', 'SelfPortExpression', 'SelfPortSource', 'SignatureType', 'StringConstructor', 'StringLiteral', 'TypeApplication', 'TypeExpression', 'TypeParameter', 'TypeParameterReference'];
     }
 
     protected override computeIsSubtype(subtype: string, supertype: string): boolean {
@@ -489,7 +475,6 @@ export class BifrostAstReflection extends AbstractAstReflection {
             case NodeTypeDefinition: {
                 return this.isSubtype(SignatureType, supertype);
             }
-            case NodePortSource:
             case NodeTypeDefinitionSource:
             case SelfPortSource: {
                 return this.isSubtype(InstanceSource, supertype);
@@ -509,12 +494,10 @@ export class BifrostAstReflection extends AbstractAstReflection {
             case 'MatchVariableUsage:variable': {
                 return MatchVariableDefinition;
             }
-            case 'NodePortExpression:instanceRef':
-            case 'NodePortSource:instanceRef': {
+            case 'NodePortExpression:instanceRef': {
                 return Node;
             }
             case 'NodePortExpression:portRef':
-            case 'NodePortSource:portRef':
             case 'SelfPortExpression:portRef':
             case 'SelfPortSource:portRef': {
                 return PortDefinition;

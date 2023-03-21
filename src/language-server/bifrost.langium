@@ -98,7 +98,6 @@ Node:
 InstanceSource:
     {infer NodeTypeDefinitionSource} nodeDef=[NodeTypeDefinition] TypeParameterAssignmentsClause?
     | {infer SelfPortSource} 'this' '.' portRef=[PortDefinition:LOWER_ID]
-    | {infer NodePortSource} 'this' '.' instanceRef=[Node] '.' portRef=[PortDefinition:LOWER_ID]
     ;
 
 PortDefinition: direction=Direction name=LOWER_ID 'of' type=TypeExpression;
